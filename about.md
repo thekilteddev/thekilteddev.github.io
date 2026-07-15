@@ -14,7 +14,7 @@ The Kilted Dev is one person's field notes from a Windows laptop running eightee
 
 Every piece here starts as a real build log from one of those projects, gets fact-checked against that project's own records, and carries an honest "what's still open" section when there is one. Nothing is published that wasn't actually run.
 
-Want to talk shop? Reach out at <a href="mailto:hello@PLACEHOLDER.example">hello@PLACEHOLDER.example</a>.
+Want to talk shop? Reach out at <a href="mailto:thekilteddev@outlook.com">thekilteddev@outlook.com</a>.
 
 </section>
 </div>
