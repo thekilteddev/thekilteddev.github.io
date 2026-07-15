@@ -1,0 +1,257 @@
+---
+layout: post.njk
+title: Route, don't guess
+kicker: Field notes / orchestration
+standfirst: How the router that decides which AI model gets which task got built, and the near miss that taught it where not to reach.
+description: Field notes on building an AI model router. Task shape over difficulty, three hidden taxes, and the near miss that inverted the cross-project default.
+date: 2026-07-15
+bylineTags: ["10-day build log", "routing & delegation"]
+permalink: /route-dont-guess/
+---
+<style>
+  .split { border: 1px solid var(--rule); border-radius: 6px; background: var(--bg-raised); overflow: hidden; }
+  .split-q {
+    padding: 20px 24px; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em;
+    color: var(--ink-dim); text-transform: uppercase; border-bottom: 1px solid var(--rule);
+    background: color-mix(in srgb, var(--loch) 5%, var(--bg-raised));
+  }
+  .split-q b { color: var(--ink); }
+  .split-body { display: flex; }
+  .split-body > div { flex: 1; padding: 24px; }
+  .split-body > div:first-child { border-right: 1px solid var(--rule); }
+  .path-tag {
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+    display: inline-block; padding: 4px 8px; border-radius: 4px; margin-bottom: 14px;
+  }
+  .path-down { color: var(--moss); border: 1px solid color-mix(in srgb, var(--moss) 45%, transparent); }
+  .path-stay { color: var(--loch); border: 1px solid color-mix(in srgb, var(--loch) 45%, transparent); }
+  .path-shape { font-family: var(--font-body); font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--ink); }
+  .path-dest { font-size: 15px; color: var(--ink-dim); line-height: 1.5; }
+  .split-arrow { font-family: var(--font-mono); color: var(--ink-dim); font-size: 15px; }
+  .taxes { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin: 32px 0 8px; }
+  .tax-row {
+    display: grid; grid-template-columns: minmax(0,140px) 1fr; gap: 20px;
+    padding: 20px 0; border-top: 1px solid var(--rule); align-items: baseline;
+  }
+  .tax-row:first-child { border-top: none; }
+  .tax-name {
+    font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--loch); font-weight: 500;
+  }
+  .tax-desc { font-size: 16px; line-height: 1.55; color: var(--ink); margin: 0; }
+  .tax-row.dominant .tax-name { color: var(--moss); }
+  .tax-row.dominant .tax-name::after {
+    content: "dominant"; display: block; margin-top: 6px; font-size: 11px;
+    letter-spacing: 0.06em; color: var(--ink-dim);
+  }
+  .bands { margin: 32px 0 8px; display: grid; gap: 12px; }
+  .band { border: 1px solid var(--rule); border-radius: 6px; padding: 18px 22px; background: var(--bg-raised); }
+  .band-read { border-color: var(--good); }
+  .band-propose { border-color: var(--warn); }
+  .band-mutate { border-color: var(--bad); }
+  .band-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; flex-wrap: wrap; }
+  .band-verb {
+    font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.06em;
+    text-transform: uppercase; font-weight: 500;
+  }
+  .band-read .band-verb { color: var(--good); }
+  .band-propose .band-verb { color: var(--warn); }
+  .band-mutate .band-verb { color: var(--bad); }
+  .band-rule {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--ink-dim);
+  }
+  .band-body { font-size: 16px; line-height: 1.55; margin: 0; }
+  .timeline { margin: 24px 0 8px; }
+  .tl {
+    display: grid; grid-template-columns: minmax(0,96px) 1fr; gap: 8px 24px;
+    padding: 18px 0; border-top: 1px solid var(--rule);
+  }
+  .tl:last-child { border-bottom: 1px solid var(--rule); }
+  .tl-day {
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--loch); font-weight: 500; padding-top: 2px;
+  }
+  .tl-body h3 {
+    font-family: var(--font-display); font-weight: 700; font-size: 17px;
+    margin: 0 0 6px; letter-spacing: -0.01em;
+  }
+  .tl-body p { font-size: 15.5px; line-height: 1.55; color: var(--ink-dim); margin: 0; }
+  @media (max-width: 560px) {
+    .split-body { flex-direction: column; }
+    .split-body > div:first-child { border-right: none; border-bottom: 1px solid var(--rule); }
+    .tax-row { grid-template-columns: 1fr; gap: 6px; }
+    .tl { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+
+<section class="lead">
+  <p>Every Claude Code session defaults to whatever model it was opened with. Ask it to rename a variable or design a whole subsystem and, left alone, it reaches for the same tier both times. That's fine until the bill notices. The obvious fix is a rule of thumb: cheap model for easy stuff, expensive model for hard stuff. It sounds right. It's wrong, and working out why it's wrong is most of what this project turned out to be.</p>
+</section>
+
+<section>
+  <h2><span class="h2-num">the routing variable</span>What it actually decides</h2>
+  <p>The orchestrator is a routing layer, not another agent framework. It lives as markdown: a contract file, a handful of dispatch templates, an append-only ledger, all read by a session before it delegates anything. No installed dependency, no external scheduler. The bet, made on day one, was that Claude Code's own primitives were already enough, and the missing piece was a policy rather than a platform.</p>
+  <p>The policy's core move is refusing "hard versus easy" as the routing variable. What matters is task shape: how many correction rounds the work needs, and whether a given round can be checked objectively.</p>
+
+  <figure class="fig">
+    <div class="split">
+      <div class="split-q">The question isn't <b>is this hard?</b> — it's <b>what shape is the work?</b></div>
+      <div class="split-body">
+        <div>
+          <span class="path-tag path-down">route down &darr;</span>
+          <div class="path-shape">One-shot, objectively checkable</div>
+          <p class="path-dest">Tests exist or output validates against a schema. <span class="split-arrow">→</span> Push down the cost ladder: scripts, local models, then cheap hosted tiers.</p>
+        </div>
+        <div>
+          <span class="path-tag path-stay">stays top &uarr;</span>
+          <div class="path-shape">Iterative, judgment-heavy</div>
+          <p class="path-dest">Design, debugging, architecture, review. <span class="split-arrow">→</span> Stays with the top-tier model, in-session.</p>
+        </div>
+      </div>
+    </div>
+    <figcaption class="fig-cap"><b>Fig 1.</b> Task shape, not difficulty, decides the route.</figcaption>
+  </figure>
+
+  <p>Underneath that split sit three costs the "cheap tier for easy tasks" instinct never prices in.</p>
+
+  <div class="taxes" role="list" aria-label="Three hidden costs">
+    <div class="tax-row" role="listitem">
+      <div class="tax-name">Cold-start tax</div>
+      <p class="tax-desc">Every delegated session re-derives context from nothing, so handing off a five-minute edit loses outright.</p>
+    </div>
+    <div class="tax-row" role="listitem">
+      <div class="tax-name">Review tax</div>
+      <p class="tax-desc">Whoever dispatched the work still pays to read whatever comes back, and a chatty cheap-tier response can erase its own savings.</p>
+    </div>
+    <div class="tax-row dominant" role="listitem">
+      <div class="tax-name">Retry tax</div>
+      <p class="tax-desc">Cheap models fail more often at anything with judgment in it, and every failure means a redo.</p>
+    </div>
+  </div>
+
+  <p>The rule that survives all three isn't "is this task hard". It's whether the expected saving beats the expected cost of doing it again. Iteration-heavy work maximises the wrong side of that inequality no matter how easy it looks.</p>
+</section>
+
+<section>
+  <h2><span class="h2-num">the pinned tier</span>What never gets cheaper</h2>
+  <p>Four categories are pinned to the top tier permanently, however simple the task looks in isolation.</p>
+  <p>Taste-sensitive output is the first: design, copy, naming, brand voice. A component name is trivial to compute and still wants the model with taste. It turns out "easy" and "low-stakes" are different axes, an idea that arrived from outside the project and earned its place.</p>
+  <p>The terminal review is the second. Per-task reviews can run on a mid tier, but the whole-branch pass before anything ships always runs top-tier, because it catches what the narrower passes miss. A cheap-tier pass once sailed past a real security hole that a stronger model then caught. The rule dates from that day.</p>
+  <p>Third, a green light from a cheap tier gates a dispatch but never substitutes for verification. Cheap models have a structural habit of reporting success they haven't earned.</p>
+  <p>Fourth, the orchestration layer itself. A cheap model was tried as middle manager between the session and a worker. Sixty minutes and roughly fifty tool calls later it had shipped nothing and quietly run a global install nobody asked for. Delegation stays a command the session issues directly. Nobody gets a middle manager.</p>
+</section>
+
+<section>
+  <h2><span class="h2-num">the evidence rule</span>Proof over promises</h2>
+  <p>Every delegated run ends the same way: a status block in the chat, and a row appended to a ledger file. Neither trusts a bare claim. A "done" needs the tool output, test result, or screenshot sitting next to it.</p>
+  <p>The ledger isn't decoration. Each row records what was routed where, whether it passed, and the field that matters most: any lesson. A populated lesson is a candidate for promotion into the routing rules themselves. The policy tightens from its own field evidence, not just from design sessions.</p>
+</section>
+
+<section>
+  <h2><span class="h2-num">the near miss</span>The near miss</h2>
+  <p>The hardest lesson didn't come from a cost overrun. It came from a decision that would have run correctly, in the wrong place.</p>
+  <p>A "do it everywhere at once" clause, written into one project's own decision log, would have had that project's session run <code>git rm --cached</code> against a <em>sibling</em> project's repository, one it had no business touching. The user caught it before it executed. Nothing was lost.</p>
+
+  <p>But it exposed the real default across every project on the machine: any session could offer to edit a neighbouring project's files, and the offer usually looked reasonable.</p>
+
+  <p class="pull">The fix wasn't a smarter check. It was inverting the default.</p>
+
+  <p>A session now treats every other project's tree in three bands:</p>
+
+  <div class="bands">
+    <div class="band band-read">
+      <div class="band-head">
+        <span class="band-verb">Read</span>
+        <span class="band-rule">always allowed</span>
+      </div>
+      <p class="band-body">Reading a sibling's files is always allowed, since no desync is possible.</p>
+    </div>
+    <div class="band band-propose">
+      <div class="band-head">
+        <span class="band-verb">Propose</span>
+        <span class="band-rule">only sanctioned cross-project write</span>
+      </div>
+      <p class="band-body">Writing a note into the sibling's root asking its own next session to decide.</p>
+    </div>
+    <div class="band band-mutate">
+      <div class="band-head">
+        <span class="band-verb">Mutate</span>
+        <span class="band-rule">denied by default</span>
+      </div>
+      <p class="band-body">Editing a sibling's facts or running commands in its repo. Two narrow carve-outs: files whose whole purpose is to receive writes, like the routing ledger, and gated edits to genuinely shared config, which always name their blast radius and wait for sign-off.</p>
+    </div>
+  </div>
+
+  <p>Everything else routes through a proposal note. It suggests; it never asserts. The receiving project's own next session folds it into its own files, then deletes it. No queue, no index, no daemon. Three ad hoc uses proved the pattern before anyone wrote it down as a rule.</p>
+</section>
+
+<section>
+  <h2><span class="h2-num">the build log</span>How it got here</h2>
+  <p>Ten days, roughly a session a day, each one closing with the same four working files (notes, memory, active constraints, rejected approaches) so the next session opens cold and still knows why past decisions landed where they did.</p>
+
+  <div class="timeline">
+    <div class="tl">
+      <div class="tl-day">Day 1</div>
+      <div class="tl-body">
+        <h3>Founded on native primitives</h3>
+        <p>External orchestration frameworks rejected in favour of Claude Code's own agent files, skills, and hooks. First trial ran in a throwaway project on purpose, for zero regression risk while the design was unproven.</p>
+      </div>
+    </div>
+    <div class="tl">
+      <div class="tl-day">Day 2</div>
+      <div class="tl-body">
+        <h3>The ladder tested for real</h3>
+        <p>A wiki migration ran as the first live trial, with a script, a local model, and two hosted tiers all doing genuine work in one pipeline. The layered-review rule landed that same week, after a cheap pass missed that security hole.</p>
+      </div>
+    </div>
+    <div class="tl">
+      <div class="tl-day">~ Same wk</div>
+      <div class="tl-body">
+        <h3>First shipped consumer</h3>
+        <p>A pension calculator's feature became the first real work routed end-to-end through the policy. It surfaced the first known gap: the local tier only speaks Python, and this task was JavaScript. Not a misroute, a disqualification, but a gap worth naming.</p>
+      </div>
+    </div>
+    <div class="tl">
+      <div class="tl-day">Day 4</div>
+      <div class="tl-body">
+        <h3>Outside validation</h3>
+        <p>An unrelated public routing framework, reviewed independently, converged on the same core shape from a completely different workload. Its one genuinely new idea, taste as a routing axis distinct from difficulty, got folded in. Its "never run high reasoning effort" rule got rejected, since it conflicts with exactly the stages this project keeps expensive on purpose.</p>
+      </div>
+    </div>
+    <div class="tl">
+      <div class="tl-day">Day 6</div>
+      <div class="tl-body">
+        <h3>Cross-project messaging formalised</h3>
+        <p>Three ad hoc successes generalised into the proposal-note convention.</p>
+      </div>
+    </div>
+    <div class="tl">
+      <div class="tl-day">Day 7</div>
+      <div class="tl-body">
+        <h3>The near miss, and the contract it produced</h3>
+        <p>Default-deny on cross-project mutation became a standing, machine-wide rule.</p>
+      </div>
+    </div>
+    <div class="tl">
+      <div class="tl-day">Day 10</div>
+      <div class="tl-body">
+        <h3>Fleet-wide rollout</h3>
+        <p>The enforcement line, the one that makes a project's session actually consult the policy instead of silently defaulting, was offered across roughly eighteen sibling projects. Opt-in per project, tracked from the filesystem alone.</p>
+      </div>
+    </div>
+    <div class="tl">
+      <div class="tl-day">Day 11</div>
+      <div class="tl-body">
+        <h3>The ledger checks itself</h3>
+        <p>A staleness audit found most adopted projects had quietly stopped logging, so a hook now nudges emission at session end. The same day, a cheap-tier reviewer blamed an unrelated, pre-existing file change on the task it was checking. It got caught by comparing timestamps, and became a standing rule: a cheap tier may scan, but attributing a found change to a cause needs a timestamp check first, not a guess.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2-num">what's still open</span>What's still open</h2>
+  <p>Two gaps stay visible on purpose. The local tier only routes Python-shaped work, so JavaScript tasks run top-tier by default until a second real JS consumer justifies building a driver. And one mid-tier code-generation route sits in the ladder unproven: named, priced, ready, and untouched, because no task has gone through it yet, and a rung nobody has used is not the same as a rung that works.</p>
+  <p class="open-note">Nothing here claims further than what's actually been run. The whole apparatus is a bet that the interesting problem was never "which model is smartest". It was knowing, task by task, when smartest is the wrong thing to be paying for.</p>
+</section>
