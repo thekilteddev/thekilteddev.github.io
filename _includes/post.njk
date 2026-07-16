@@ -5,7 +5,7 @@ layout: base.njk
   <div class="article-head">
     <p class="kicker">{{ kicker }}</p>
     <h1>{{ title }}</h1>
-    <p class="standfirst">{{ standfirst }}</p>
+    <p class="standfirst">{{ standfirst | safe }}</p>
     <div class="byline">
       <span><b>{{ site.author }}</b></span>
       {% for tag in bylineTags %}<span>{{ tag }}</span>{% endfor %}

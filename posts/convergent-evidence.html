@@ -1,0 +1,254 @@
+---
+layout: post.njk
+title: Convergent evidence
+kicker: Field notes / orchestration
+standfirst: 'Companion to <a href="/route-dont-guess/">"Route, don''t guess"</a>: nine tools crossed the desk during the ten-day build. Not one became a dependency. The reasons why are the actual argument for building it in-house.'
+description: Nine tools crossed the desk during the ten-day build. Not one became a dependency. Field notes on why the rejections are the argument.
+date: 2026-07-16
+bylineTags: ["10-day build log", "tool evaluation"]
+permalink: /convergent-evidence/
+---
+<style>
+  /* standfirst carries a link on this piece; base sets neither */
+  .standfirst { max-width: 46ch; }
+  .standfirst a { color: var(--loch); text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; }
+/* ---- candidate ledger: rule-separated rows, no cards, no stripes ---- */
+  .ledger {
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    margin: 32px 0 8px;
+  }
+  .cand {
+    padding: 22px 0;
+    border-top: 1px solid var(--rule);
+  }
+  .cand:first-child { border-top: none; }
+  .cand p {
+    margin: 0;
+    font-size: 16.5px;
+    line-height: 1.6;
+  }
+  .cand strong {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+    color: var(--moss);   /* moss = decorative/secondary; never confusable with a loch link */
+  }
+
+  /* ---- side-by-side comparison ---- */
+  /* frame lives on the wrapper: border-radius is ignored on a border-collapse table */
+  .cmp-wrap {
+    margin: 32px 0 8px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  table.cmp {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  table.cmp th, table.cmp td {
+    text-align: left;
+    padding: 14px 16px;
+    vertical-align: top;
+    border-bottom: 1px solid var(--rule);
+  }
+  table.cmp thead th {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--ink-dim);
+    background: color-mix(in srgb, var(--loch) 5%, var(--bg-raised));
+    white-space: nowrap;
+  }
+  table.cmp thead th:last-child { color: var(--loch); }
+  table.cmp tbody tr:last-child td { border-bottom: none; }
+  table.cmp tbody th {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing: 0.03em;
+    font-weight: 500;
+    color: var(--ink);
+    background: color-mix(in srgb, var(--rule) 30%, var(--bg-raised));
+    width: 27%;
+  }
+  table.cmp td { background: var(--bg-raised); color: var(--ink-dim); }
+  table.cmp td:last-child { color: var(--ink); }
+
+  /* ---- pull quote: editorial rules, never a side stripe ---- */
+  .pull {
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 24px 0;
+    margin: 32px 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 23px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+
+  /* ---- closing note ---- */
+  .open-note {
+    font-size: 16px;
+    color: var(--ink-dim);
+    border-top: 1px solid var(--rule);
+    padding-top: 32px;
+    margin-top: 40px;
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 40px 0 56px;
+  }
+  footer .wrap { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  footer .fw {
+    font-family: var(--font-display); font-weight: 700; font-size: 16px; color: var(--ink);
+  }
+  footer .fw .hy { color: var(--moss); }
+  footer .fmeta {
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink-dim);
+  }
+
+  @media (max-width: 560px) {
+    /* table collapses to labelled blocks — no horizontal scroll, no clipping */
+    table.cmp, table.cmp tbody, table.cmp tr, table.cmp th, table.cmp td { display: block; width: auto; }
+    table.cmp thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    table.cmp tbody tr { border-bottom: 1px solid var(--rule); }
+    table.cmp tbody tr:last-child { border-bottom: none; }
+    table.cmp tbody th { width: auto; border-bottom: none; padding-bottom: 10px; }
+    table.cmp td { border-bottom: none; padding-top: 0; padding-bottom: 12px; }
+    table.cmp td::before {
+      content: attr(data-label);
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      margin-bottom: 4px;
+    }
+    table.cmp td:last-child::before { color: var(--loch); }
+  }
+</style>
+
+<section class="lead">
+  <p>Building something in-house invites an obvious question: did you check whether someone already shipped it? A companion project, the one that tracks and evaluates AI tooling for the whole machine, kept an eye out for exactly that, every time an orchestration-shaped tool crossed its desk. The bar it held every candidate to was narrow on purpose: does it add a capability the orchestrator doesn't already have?</p>
+
+  <p class="pull">Almost nothing cleared it. That's less interesting as a verdict than as a pattern.</p>
+</section>
+
+<section>
+  <h2><span class="h2-num">the head-on cases</span>The direct comparators</h2>
+  <p>Six candidates were orchestrators or multi-agent harnesses solving the same problem: which model does which task, and how do you trust what comes back.</p>
+
+  <div class="ledger">
+    <div class="cand">
+      <p><strong>Fable Foreman</strong> is parked, worth watching. It sits near one-to-one with our own routing policy: capability-class tiers, blind verification, budget-aware dispatch. The value was design comparison rather than new capability. It was also four days old at review, with two of its three headline features gated behind a call-to-action and never actually shown.</p>
+    </div>
+    <div class="cand">
+      <p><strong>Ruflo</strong> went to the backlog. A hundred-plus prebuilt agents, vector memory, multi-model routing, some 210 tool integrations, 58k+ GitHub stars and climbing. What it sells is the routing-plus-verification loop already running here, more simply.</p>
+    </div>
+    <div class="cand">
+      <p><strong>CrewAI skills</strong> was rejected on overlap, not quality. It's official plugin scaffolding for an orchestrator, researcher, writer, and reviewer crew, from a legitimate 55.5k-star parent project. The same pattern already runs on the machine's own workflow and routing layers; a third-party framework would duplicate it rather than extend it.</p>
+    </div>
+    <div class="cand">
+      <p><strong>9router</strong> was rejected hard. It's a credential-interception proxy for every model provider, carrying an unauthenticated remote-code-execution flaw scored CVSS 10, plus terms-of-service risk for any subscription routed through it. An existing fallback covers the same need safely.</p>
+    </div>
+    <div class="cand">
+      <p><strong>Claude Council</strong> was declined by choice. A genuine multi-model consultation plugin, honestly framed, but a lighter version of a panel-of-models pattern already covered elsewhere.</p>
+    </div>
+    <div class="cand">
+      <p><strong>Three "agentic OS" reels</strong> were rejected with nothing to install. Camera mockups of an always-on multi-agent life OS. Every named part (a constitution file, tier routing, adversarial sparring, a cost ledger, a budget halt) maps onto pieces already running here, separately and more safely. The bundle is marketing wrapped around five patterns already decomposed on purpose.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2-num">a different shelf</span>The adjacent category</h2>
+  <p>The second cluster doesn't route anything. These are desktop shells for running a fan-out once you've decided on one, checked for an unrelated reason rather than because they compete with the routing policy.</p>
+
+  <div class="ledger">
+    <div class="cand">
+      <p><strong>Orca</strong> was confirmed hands-on. Free, runs the real CLI under your own subscription; skill and plugin parity held up, and a worktree fan-out plus diff-and-merge round-trip verified end to end on a scratch repo. 12.1k stars.</p>
+    </div>
+    <div class="cand">
+      <p><strong>Nimbalyst</strong> went to the backlog. Kanban-style parallel sessions with worktree isolation, parked pending confirmation it plays well with an existing hook-based workflow.</p>
+    </div>
+    <div class="cand">
+      <p><strong>DevSwarm</strong> was rejected. Same category as Orca, but closed-source, paid, download-only, and the public repo is a landing page with 87 stars. It doesn't clear a bar a free alternative already cleared.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2-num">the two that landed</span>What cleared the bar wasn't a tool</h2>
+  <p>Two inputs cleared the bar, both as ideas rather than installs, arriving from opposite directions and landing on the same shape.</p>
+  <p>A stranger's public routing config contributed one genuinely new distinction: taste as an axis separate from difficulty. A component name or a marketing hook is trivial to compute, but still wants the highest-taste model available. A difficulty-only rule would route that down, wrongly. The axis is now a permanent exception in the routing policy. The same source's "manager never runs high reasoning effort" rule was weighed and rejected; it conflicts directly with keeping the terminal review and hardest verification stages deliberately expensive.</p>
+  <p>And an academic paper on filesystem-as-agent-architecture (numbered stage folders, a per-stage context file, human gates between them) turned out to overlap about 80% with the four-file working-notes system already in use. Independent convergence, this time from arXiv instead of a product pitch.</p>
+
+  <p class="pull">Neither produced a dependency. Both produced a stronger version of something that already existed.</p>
+</section>
+
+<section>
+  <h2><span class="h2-num">dimension by dimension</span>The closest comparator, side by side</h2>
+  <p>Fable Foreman is worth lining up in full, precisely because it's the closest external thing to the in-house build.</p>
+
+  <div class="cmp-wrap">
+    <table class="cmp">
+      <thead>
+        <tr>
+          <th scope="col">Dimension</th>
+          <th scope="col">Fable Foreman</th>
+          <th scope="col">The in-house orchestrator</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Routing basis</th>
+          <td data-label="Fable Foreman">Capability class: frontier / workhorse / fast</td>
+          <td data-label="The in-house orchestrator">Verifiability + iteration count, down a cost ladder</td>
+        </tr>
+        <tr>
+          <th scope="row">Model naming</th>
+          <td data-label="Fable Foreman">Aliases resolved at runtime</td>
+          <td data-label="The in-house orchestrator">Same. Tier by role, never a hardcoded model ID</td>
+        </tr>
+        <tr>
+          <th scope="row">Verification</th>
+          <td data-label="Fable Foreman">"Trusts no one": blind verify against the real workload</td>
+          <td data-label="The in-house orchestrator">Same posture. Never trust a subagent's "done" without evidence</td>
+        </tr>
+        <tr>
+          <th scope="row">Budget awareness</th>
+          <td data-label="Fable Foreman">Budget-aware dispatch, degradation rule</td>
+          <td data-label="The in-house orchestrator">Append-only ledger plus a budget halt</td>
+        </tr>
+        <tr>
+          <th scope="row">Design/review routing</th>
+          <td data-label="Fable Foreman">Not specified</td>
+          <td data-label="The in-house orchestrator">Never routes down. A standing, explicit rule</td>
+        </tr>
+        <tr>
+          <th scope="row">Trust surface</th>
+          <td data-label="Fable Foreman">Four days old, spawns full agent fleets, content gated behind a CTA</td>
+          <td data-label="The in-house orchestrator">In-house, auditable, every piece proven separately</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The market kept independently rediscovering the same routing model: a stranger's config file, an academic paper, three viral reels, and a four-day-old repo that maps onto our own build dimension for dimension. None became a dependency, because the same five patterns were already decomposed into separable, auditable pieces before any of them showed up.</p>
+</section>
+
+<section>
+  <h2><span class="h2-num">what it adds up to</span>The actual takeaway</h2>
+  <p>A single rejected tool proves nothing; every project rejects things. What's worth noticing is the shape of nine candidates checked and not one dependency adopted. Not one offered a capability the routing layer didn't already have, and the two that offered something real turned out to be ideas rather than products. That's what you'd expect if the underlying problem (route by verifiability, verify blindly, cap the budget, keep a human in the loop) is well-understood enough that independent people keep arriving at the same four or five pieces.</p>
+  <p class="open-note">The discipline wasn't refusing to look. It was refusing to trade five pieces I can audit for one box I can't. This doesn't claim there were no more tools worth checking. Only that everything that crossed the desk was checked against the same bar, and the bar held.</p>
+</section>

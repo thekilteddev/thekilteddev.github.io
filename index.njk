@@ -13,7 +13,7 @@ layout: base.njk
     <article style="border-top: 1px solid var(--rule); padding: 28px 0;">
       <p class="kicker" style="margin-bottom: 10px;">{{ post.data.kicker }}</p>
       <h2 style="margin-bottom: 10px;"><a href="{{ post.url }}" style="color: var(--ink); text-decoration: none;">{{ post.data.title }}</a></h2>
-      <p style="color: var(--ink-dim); margin-bottom: 12px;">{{ post.data.standfirst }}</p>
+      <p style="color: var(--ink-dim); margin-bottom: 12px;">{{ post.data.standfirst | safe }}</p>
       <p style="font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim); margin: 0;">{{ post.date | postDate if postDate else post.date.toISOString().slice(0,10) }}</p>
     </article>
     {% endfor %}

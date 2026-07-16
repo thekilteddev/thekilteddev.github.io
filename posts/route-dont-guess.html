@@ -2,8 +2,8 @@
 layout: post.njk
 title: Route, don't guess
 kicker: Field notes / orchestration
-standfirst: How the router that decides which AI model gets which task got built, and the near miss that taught it where not to reach.
-description: Field notes on building an AI model router. Task shape over difficulty, three hidden taxes, and the near miss that inverted the cross-project default.
+standfirst: How we built the orchestrator that routes each task to the optimal model, and the near miss that drew the line on what it's allowed to act on.
+description: Field notes on building an AI model orchestrator. Task shape over difficulty, three hidden taxes, and the near miss that inverted the cross-project default.
 date: 2026-07-15
 bylineTags: ["10-day build log", "routing & delegation"]
 permalink: /route-dont-guess/
@@ -86,7 +86,7 @@ permalink: /route-dont-guess/
 </style>
 
 <section class="lead">
-  <p>Every Claude Code session defaults to whatever model it was opened with. Ask it to rename a variable or design a whole subsystem and, left alone, it reaches for the same tier both times. That's fine until the bill notices. The obvious fix is a rule of thumb: cheap model for easy stuff, expensive model for hard stuff. It sounds right. It's wrong, and working out why it's wrong is most of what this project turned out to be.</p>
+  <p>Every Claude Code session defaults to the model it was opened with. Ask it to rename a variable or design a whole subsystem and, left alone, it reaches for the same tier both times. That's fine until the quota notices. Tokens and time are one budget, and the top tier spends both fastest. Waste them on a variable rename and they aren't there for the subsystem. The obvious fix is a rule of thumb: low-cost model for easy stuff, expensive model for hard stuff. It sounds right. It's wrong, and working out why it's wrong is most of what this project turned out to be.</p>
 </section>
 
 <section>
@@ -101,7 +101,7 @@ permalink: /route-dont-guess/
         <div>
           <span class="path-tag path-down">route down &darr;</span>
           <div class="path-shape">One-shot, objectively checkable</div>
-          <p class="path-dest">Tests exist or output validates against a schema. <span class="split-arrow">→</span> Push down the cost ladder: scripts, local models, then cheap hosted tiers.</p>
+          <p class="path-dest">Tests exist or output validates against a schema. <span class="split-arrow">→</span> Push down the cost ladder: scripts, local models, then low-cost hosted tiers.</p>
         </div>
         <div>
           <span class="path-tag path-stay">stays top &uarr;</span>
@@ -113,7 +113,7 @@ permalink: /route-dont-guess/
     <figcaption class="fig-cap"><b>Fig 1.</b> Task shape, not difficulty, decides the route.</figcaption>
   </figure>
 
-  <p>Underneath that split sit three costs the "cheap tier for easy tasks" instinct never prices in.</p>
+  <p>Underneath that split sit three costs the "low-cost tier for easy tasks" instinct never prices in.</p>
 
   <div class="taxes" role="list" aria-label="Three hidden costs">
     <div class="tax-row" role="listitem">
@@ -122,11 +122,11 @@ permalink: /route-dont-guess/
     </div>
     <div class="tax-row" role="listitem">
       <div class="tax-name">Review tax</div>
-      <p class="tax-desc">Whoever dispatched the work still pays to read whatever comes back, and a chatty cheap-tier response can erase its own savings.</p>
+      <p class="tax-desc">Whoever dispatched the work still pays to read whatever comes back, and a chatty response from a low-cost tier can erase its own savings.</p>
     </div>
     <div class="tax-row dominant" role="listitem">
       <div class="tax-name">Retry tax</div>
-      <p class="tax-desc">Cheap models fail more often at anything with judgment in it, and every failure means a redo.</p>
+      <p class="tax-desc">Low-cost models fail more often at anything with judgment in it, and every failure means a redo.</p>
     </div>
   </div>
 
@@ -134,12 +134,12 @@ permalink: /route-dont-guess/
 </section>
 
 <section>
-  <h2><span class="h2-num">the pinned tier</span>What never gets cheaper</h2>
+  <h2><span class="h2-num">the pinned tier</span>What never routes down</h2>
   <p>Four categories are pinned to the top tier permanently, however simple the task looks in isolation.</p>
   <p>Taste-sensitive output is the first: design, copy, naming, brand voice. A component name is trivial to compute and still wants the model with taste. It turns out "easy" and "low-stakes" are different axes, an idea that arrived from outside the project and earned its place.</p>
-  <p>The terminal review is the second. Per-task reviews can run on a mid tier, but the whole-branch pass before anything ships always runs top-tier, because it catches what the narrower passes miss. A cheap-tier pass once sailed past a real security hole that a stronger model then caught. The rule dates from that day.</p>
-  <p>Third, a green light from a cheap tier gates a dispatch but never substitutes for verification. Cheap models have a structural habit of reporting success they haven't earned.</p>
-  <p>Fourth, the orchestration layer itself. A cheap model was tried as middle manager between the session and a worker. Sixty minutes and roughly fifty tool calls later it had shipped nothing and quietly run a global install nobody asked for. Delegation stays a command the session issues directly. Nobody gets a middle manager.</p>
+  <p>The terminal review is the second. Per-task reviews can run on a mid tier, but the whole-branch pass before anything ships always runs top-tier, because it catches what the narrower passes miss. A pass on a low-cost tier once sailed past a real security hole that a stronger model then caught. The rule dates from that day.</p>
+  <p>Third, a green light from a low-cost tier gates a dispatch but never substitutes for verification. Low-cost models have a structural habit of reporting success they haven't earned.</p>
+  <p>Fourth, the orchestration layer itself. A low-cost model was tried as middle manager between the session and a worker. Sixty minutes and roughly fifty tool calls later it had shipped nothing and quietly run a global install nobody asked for. Delegation stays a command the session issues directly. Nobody gets a middle manager.</p>
 </section>
 
 <section>
@@ -187,7 +187,7 @@ permalink: /route-dont-guess/
 </section>
 
 <section>
-  <h2><span class="h2-num">the build log</span>How it got here</h2>
+  <h2><span class="h2-num">the build log</span>How it came together</h2>
   <p>Ten days, roughly a session a day, each one closing with the same four working files (notes, memory, active constraints, rejected approaches) so the next session opens cold and still knows why past decisions landed where they did.</p>
 
   <div class="timeline">
@@ -202,7 +202,7 @@ permalink: /route-dont-guess/
       <div class="tl-day">Day 2</div>
       <div class="tl-body">
         <h3>The ladder tested for real</h3>
-        <p>A wiki migration ran as the first live trial, with a script, a local model, and two hosted tiers all doing genuine work in one pipeline. The layered-review rule landed that same week, after a cheap pass missed that security hole.</p>
+        <p>A wiki migration ran as the first live trial, with a script, a local model, and two hosted tiers all doing genuine work in one pipeline. The layered-review rule landed that same week, after a low-cost pass missed that security hole.</p>
       </div>
     </div>
     <div class="tl">
@@ -216,7 +216,7 @@ permalink: /route-dont-guess/
       <div class="tl-day">Day 4</div>
       <div class="tl-body">
         <h3>Outside validation</h3>
-        <p>An unrelated public routing framework, reviewed independently, converged on the same core shape from a completely different workload. Its one genuinely new idea, taste as a routing axis distinct from difficulty, got folded in. Its "never run high reasoning effort" rule got rejected, since it conflicts with exactly the stages this project keeps expensive on purpose.</p>
+        <p>An unrelated public routing framework, reviewed independently, converged on the same core shape from a completely different workload. We folded in its one genuinely new idea: taste as a routing axis distinct from difficulty. We rejected its "never run high reasoning effort" rule, since it conflicts with exactly the stages this project keeps expensive on purpose.</p>
       </div>
     </div>
     <div class="tl">
@@ -244,7 +244,7 @@ permalink: /route-dont-guess/
       <div class="tl-day">Day 11</div>
       <div class="tl-body">
         <h3>The ledger checks itself</h3>
-        <p>A staleness audit found most adopted projects had quietly stopped logging, so a hook now nudges emission at session end. The same day, a cheap-tier reviewer blamed an unrelated, pre-existing file change on the task it was checking. It got caught by comparing timestamps, and became a standing rule: a cheap tier may scan, but attributing a found change to a cause needs a timestamp check first, not a guess.</p>
+        <p>A staleness audit found most adopted projects had quietly stopped logging, so a hook now nudges emission at session end. The same day, a reviewer on a low-cost tier blamed an unrelated, pre-existing file change on the task it was checking. Comparing timestamps caught it, and it became a standing rule: a low-cost tier may scan, but attributing a found change to a cause needs a timestamp check first, not a guess.</p>
       </div>
     </div>
   </div>
@@ -252,6 +252,8 @@ permalink: /route-dont-guess/
 
 <section>
   <h2><span class="h2-num">what's still open</span>What's still open</h2>
-  <p>Two gaps stay visible on purpose. The local tier only routes Python-shaped work, so JavaScript tasks run top-tier by default until a second real JS consumer justifies building a driver. And one mid-tier code-generation route sits in the ladder unproven: named, priced, ready, and untouched, because no task has gone through it yet, and a rung nobody has used is not the same as a rung that works.</p>
-  <p class="open-note">Nothing here claims further than what's actually been run. The whole apparatus is a bet that the interesting problem was never "which model is smartest". It was knowing, task by task, when smartest is the wrong thing to be paying for.</p>
+  <p>Three gaps stay visible on purpose. The local tier only routes Python-shaped work, so JavaScript tasks run top-tier by default until a second real JS consumer justifies building a driver. Reasoning effort never entered the model at all: the policy routes on which tier runs a task, not on how hard that tier is told to think, and the same model at a different effort setting is a different cost and arguably a different capability. That dimension is unexamined, not settled. And one mid-tier code-generation route sits in the ladder unproven: named, priced, ready, and untouched, because no task has gone through it yet.</p>
+  <p>A rung nobody has used is not the same as a rung that works.</p>
+  <p class="open-note">Nothing above is theory. Every rule came from work that actually ran. The whole apparatus is a bet that the interesting problem was never "which model is smartest". It was knowing, task by task, when smartest is the wrong thing to be paying for.</p>
+  <p class="open-note">Companion piece: <a href="/convergent-evidence/">Convergent evidence</a>. Nine orchestration-shaped tools crossed the desk while this was being built, and not one became a dependency.</p>
 </section>
