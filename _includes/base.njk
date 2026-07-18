@@ -61,6 +61,9 @@
     letter-spacing: -0.01em; color: var(--ink); text-decoration: none;
     display: inline-flex; align-items: center;
   }
+  /* The mark: U+203A, set as type so it inherits weight/scale and needs no per-theme colour.
+     Chosen over U+003E, which rides the maths axis and reads as an operator beside lowercase. */
+  .wm-mark { color: var(--loch); margin-right: 0.45ch; }
   .wm-the { color: var(--moss); }
   .wm-kilted { color: var(--ink); }
   .wm-dev { color: var(--loch); }
@@ -140,6 +143,18 @@
     padding: 24px 0; margin: 32px 0; font-family: var(--font-display);
     font-weight: 700; font-size: 23px; line-height: 1.3; letter-spacing: -0.01em;
   }
+  /* Prompt device — deliberately .pull's sibling (same rules, no box) carrying mono instead of
+     display type, so it reuses furniture the reader already knows and adds no container signals.
+     Two sanctioned uses only: a command genuinely run, or `echo` as a terminal aside. Never an
+     invented verb, which would claim a transcript that never existed. Sparing: ~1-2 per piece,
+     never two in consecutive paragraphs. Static, never animated. */
+  .cmd {
+    border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+    padding: 20px 0; margin: 30px 0; font-family: var(--font-mono);
+    font-size: 15px; line-height: 1.5;
+  }
+  .cmd .p { color: var(--moss); margin-right: 0.7ch; }
+  .cmd .out { display: block; color: var(--ink-dim); margin-top: 8px; font-size: 14px; }
   .open-note {
     font-size: 16px; color: var(--ink-dim);
     border-top: 1px solid var(--rule); padding-top: 32px; margin-top: 40px;
@@ -161,7 +176,7 @@
 <body>
   <header class="masthead">
     <div class="wrap">
-      <a class="wordmark" href="/"><span class="wm-the">the</span><span class="wm-kilted">kilted</span><span class="wm-dev">dev</span><span class="wm-cursor" aria-hidden="true"></span></a>
+      <a class="wordmark" href="/"><span class="wm-mark" aria-hidden="true">&rsaquo;</span><span class="wm-the">the</span><span class="wm-kilted">kilted</span><span class="wm-dev">dev</span><span class="wm-cursor" aria-hidden="true"></span></a>
       <nav class="masthead-nav">
         <a href="/about/">about</a>
         <a href="/feed.xml">rss</a>
