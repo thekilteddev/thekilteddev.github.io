@@ -97,12 +97,21 @@
     font-size: 20px; line-height: 1.55; color: var(--ink-dim);
     font-style: italic; margin: 0; max-width: 40ch;
   }
-  .byline {
-    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em;
-    color: var(--ink-dim); text-transform: uppercase; margin-top: 40px; padding-top: 20px;
-    border-top: 1px solid var(--rule); display: flex; gap: 20px; flex-wrap: wrap;
+  /* article meta row: date · read-time · [last reviewed] · tags */
+  .meta {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0 10px;
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--ink-dim); margin-top: 36px;
+    padding-top: 18px; border-top: 1px solid var(--rule);
   }
-  .byline b { color: var(--ink); font-weight: 700; }
+  .meta .sep { color: var(--rule); }
+  .meta .read { color: var(--loch); }
+  .meta .rev b { color: var(--ink); font-weight: 400; }
+  /* prose highlight: loch wash, for steering the eye to a key phrase — use sparingly */
+  mark {
+    background: color-mix(in srgb, var(--loch) 18%, transparent);
+    color: inherit; padding: 0 3px; border-radius: 3px;
+  }
   .lead p:first-child { font-size: 20px; line-height: 1.6; }
   .fig { margin: 32px 0 8px; }
   .fig-cap {

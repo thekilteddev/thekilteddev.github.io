@@ -6,9 +6,11 @@ layout: base.njk
     <p class="kicker">{{ kicker }}</p>
     <h1>{{ title }}</h1>
     <p class="standfirst">{{ standfirst | safe }}</p>
-    <div class="byline">
-      <span><b>{{ site.author }}</b></span>
-      {% for tag in bylineTags %}<span>{{ tag }}</span>{% endfor %}
+    <div class="meta">
+      <span>{{ date | ymd }}</span>
+      <span class="sep">·</span><span class="read">{{ content | readingTime }}</span>
+      {% if lastReviewed %}<span class="sep">·</span><span class="rev">last reviewed <b>{{ lastReviewed | ymd }}</b></span>{% endif %}
+      {% for tag in bylineTags %}<span class="sep">·</span><span>{{ tag }}</span>{% endfor %}
     </div>
   </div>
   {{ content | safe }}

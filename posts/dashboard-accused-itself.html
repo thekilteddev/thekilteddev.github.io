@@ -1,0 +1,169 @@
+---
+layout: post.njk
+title: The dashboard accused itself
+kicker: Field notes / tooling
+standfirst: Our own cost dashboard flagged the day it was born as a 26.5x overspend. The transcript said otherwise. Making sure it never happened to anyone else took a bug report, and three days later the fix shipped.
+description: Our cost dashboard flagged its own founding session as a 26.5x overspend. It was a category error, not waste. Field notes on the bug report that fixed it upstream.
+date: 2026-07-18
+lastReviewed: 2026-07-18
+bylineTags: ["cost tracking", "upstream fix"]
+permalink: /dashboard-accused-itself/
+---
+<style>
+  /* h2 eyebrows: house pattern, each carries a fact rather than announcing a section */
+  h2 .h2-num {
+    font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.06em; color: var(--loch); display: block; margin-bottom: 12px;
+  }
+
+  /* ---- the optimize panel, drawn: one session flagged against the average ---- */
+  /* echoes the dashboard's own cost bars. two real quantities, ratio to scale;
+     no invented values, no fabricated distribution. */
+  .ratio {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px;
+    align-items: end; height: 240px;
+    border-bottom: 1px solid var(--rule); max-width: 420px;
+  }
+  .ratio-col { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
+  .ratio-bar { background: var(--moss); width: 100%; }
+  .ratio-col.flagged .ratio-bar { background: var(--warn); }
+  .ratio-key {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px;
+    max-width: 420px; margin-top: 12px;
+  }
+  .ratio-key b {
+    font-family: var(--font-display); font-weight: 700; font-size: 19px;
+    letter-spacing: -0.015em; color: var(--ink); display: block; margin-bottom: 4px;
+  }
+  .ratio-key span {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink-dim); display: block;
+  }
+  .ratio-key em { font-style: normal; color: var(--warn); display: block; margin-top: 2px; }
+
+  /* ---- the handoff: four dated beats, ownership leaving our hands ---- */
+  /* no cards, no fills, no radius — one hairline runs the length of the arc */
+  .arc {
+    list-style: none; margin: 36px 0 8px; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 20px;
+  }
+  .arc li { border-top: 1px solid var(--rule); padding-top: 16px; position: relative; }
+  /* the beat marker sits on the hairline itself */
+  .arc li::before {
+    content: ""; position: absolute; top: -3px; left: 0;
+    width: 5px; height: 5px; background: var(--moss);
+  }
+  .arc .day {
+    font-family: var(--font-display); font-weight: 700; font-size: 22px;
+    letter-spacing: -0.015em; line-height: 1; display: block; color: var(--ink);
+  }
+  .arc .month {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink-dim); display: block; margin-top: 6px;
+  }
+  .arc .who {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.06em;
+    text-transform: uppercase; display: block; margin-top: 18px;
+    color: var(--moss);          /* moss = decorative, never interactive */
+  }
+  .arc li.ours .who { color: var(--ink-dim); }   /* only the first beat is ours */
+  .arc .beat {
+    font-size: 15.5px; line-height: 1.45; display: block; margin-top: 4px; color: var(--ink);
+  }
+
+  @media (max-width: 640px) {
+    /* the arc goes vertical before the beats crush — two up, then one up */
+    .arc { grid-template-columns: repeat(2, 1fr); gap: 0 20px; }
+    .arc li { padding-bottom: 24px; }
+    .arc li:nth-child(n+3) { padding-top: 16px; }
+  }
+  @media (max-width: 560px) {
+    .arc { grid-template-columns: 1fr; }
+    .arc li { padding-bottom: 22px; }
+    .arc .who { margin-top: 12px; }
+  }
+</style>
+
+<section class="lead">
+  <p>We build a lot of small internal dashboards. One of them tracks Claude Code token spend across the projects on this machine. It leans on an open-source engine called <a href="https://github.com/getagentseal/codeburn">CodeBurn</a>: free, local-only, reads session logs and estimates what each session would have cost on pay-as-you-go pricing. CodeBurn has a panel called optimize, and the panel's job is to flag waste. Sessions that cost far more than a project's own average, with no obvious reason why.</p>
+
+  <p>One day the panel flagged something inside its own house. The dashboard's build session, the day it came into existence, sat there marked as a <mark>26.5x cost outlier</mark>. Twenty-six and a half times the project's own average. That is the kind of number designed to make you flinch.</p>
+
+  <p class="pull">We didn't flinch. We pulled the raw transcript.</p>
+</section>
+
+<section>
+  <h2><span class="h2-num">1,070 events</span>What was actually in there</h2>
+  <p>It ran to 1,070 events. A brainstorm, a plan, twenty-four build agents dispatched, and a final commit that promoted the dashboard to its first real version. That was the founding session, and founding sessions are expensive.</p>
+
+  <p>The day a project goes from nothing to something costs more than any day after it. A house's foundation costs more than repainting one room, and nobody files that under waste. The panel had measured the founding day against the quiet maintenance days that followed and called the ratio waste. That's a category error rather than a measurement problem. The comparison was never apples to apples, and no cost threshold repairs a comparison that was wrong before the arithmetic started.</p>
+
+  <figure class="fig">
+    <div class="ratio">
+      <div class="ratio-col flagged"><div class="ratio-bar" style="height: 100%"></div></div>
+      <div class="ratio-col"><div class="ratio-bar" style="height: 6.0193%"></div></div>
+    </div>
+    <div class="ratio-key">
+      <div><b>1,045,640</b><span>tokens &mdash; the founding session</span><em>flagged</em></div>
+      <div><b>62,940</b><span>tokens &mdash; average of 12 sibling sessions</span></div>
+    </div>
+    <figcaption class="fig-cap">Token volume, input plus output: the founding session against the average of the project's other twelve. 16.6&times; &mdash; the panel's own flag used a cost ratio instead (26.5&times; at investigation time; it drifts as sessions accumulate).</figcaption>
+  </figure>
+
+  <p>So the panel was right to ask the question. It was wrong about the answer.</p>
+</section>
+
+<section>
+  <h2><span class="h2-num">silence it or file it</span>The two easy exits</h2>
+  <p>We could have ignored the flag. We could have silenced it locally and moved on, which would have worked fine, for us. It would also have left the bug sitting there for everyone else running CodeBurn against a young project, which is every project at some point.</p>
+
+  <p>So we read CodeBurn's source instead. The comparison lives in a function called <code>detectSessionOutliers</code>, in <code>src/optimize.ts</code>. Reading it turned up the useful part: the codebase already had the mechanism a fix would need. A wee exclusion list called <code>outlierExclusions</code>, already doing this exact kind of job elsewhere in the panel, sitting right there.</p>
+
+  <p>That gave us something better to file than a complaint. <a href="https://github.com/getagentseal/codeburn/issues/664">Issue #664</a>: what happens, why it's wrong, and the specific lines to change.</p>
+</section>
+
+<section>
+  <h2><span class="h2-num">six costed sessions</span>The maintainer's fix was better than ours</h2>
+  <p>CodeBurn has an active maintainer, and the pull request was open by the next morning.</p>
+
+  <p>Our sketch excluded every project's founding session, permanently. The maintainer's version was sharper. It excludes the founding session only while a project is young, and it measures young by how many costed sessions the project has behind it rather than by wall-clock age.</p>
+
+  <p>That distinction is the whole fix. Under our version, a genuinely wasteful founding session would have hidden behind the exemption forever. Under the maintainer's, the benefit of the doubt expires after six costed sessions. A founding session in a two-week-old project gets it. The same session in a mature project with months of history does not. Wall-clock age would have missed that, because a project can be old and barely used, and it's the use that makes the average mean anything.</p>
+
+  <p>Three new tests. The 86-test suite green.</p>
+
+  <p>The whole arc took three days. Report on the 14th, the maintainer's pull request open by the 15th, merged on the 16th, and out in <a href="https://github.com/getagentseal/codeburn/releases/tag/v0.9.16">v0.9.16</a> on the 17th — where the release notes say, in plain words, that a young project's founding session is no longer flagged as a cost outlier. If you run CodeBurn, update it and the bug is gone.</p>
+
+  <ol class="arc">
+    <li class="ours">
+      <span class="day">14</span>
+      <span class="month">Jul</span>
+      <span class="who">us</span>
+      <span class="beat">Issue #664 filed, with the lines to change.</span>
+    </li>
+    <li>
+      <span class="day">15</span>
+      <span class="month">Jul</span>
+      <span class="who">maintainer</span>
+      <span class="beat">Pull request open by the next morning.</span>
+    </li>
+    <li>
+      <span class="day">16</span>
+      <span class="month">Jul</span>
+      <span class="who">maintainer</span>
+      <span class="beat">Merged. Three new tests, suite green.</span>
+    </li>
+    <li>
+      <span class="day">17</span>
+      <span class="month">Jul</span>
+      <span class="who">upstream</span>
+      <span class="beat">Out in v0.9.16, for everyone.</span>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2><span class="h2-num">not luck</span>What it took</h2>
+  <p>None of this needed luck. It needed not trusting a scary number at face value, then reading the data underneath it. The rest was writing the bug report the way you would want one written to you: the exact code path, the root cause instead of the symptom, and a fix that was ready to review.</p>
+  <p>The tool was wrong, and it was wrong in a way worth the time it took to explain properly. Silencing the flag locally would have fixed our dashboard. It would have left the bug exactly where it was.</p>
+</section>
