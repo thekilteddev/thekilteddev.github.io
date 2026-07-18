@@ -2,6 +2,7 @@ import rssPlugin from "@11ty/eleventy-plugin-rss";
 
 export default function (eleventyConfig) {
   eleventyConfig.addPlugin(rssPlugin);
+  eleventyConfig.addPassthroughCopy("favicon.svg");
 
   // Reading time from the rendered post body. ~220 wpm, technical prose, min 1.
   // Strip <style>/<script> bodies first, else per-post CSS is counted as words.
