@@ -106,12 +106,19 @@
   p { margin: 0 0 20px; }
   main a { color: var(--loch); text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; }
   code, .mono { font-family: var(--font-mono); font-size: 0.9em; }
-  p code { background: color-mix(in srgb, var(--loch) 12%, transparent); padding: 1px 5px; border-radius: 4px; }
+  /* NO background behind prose text, inline code included. Settled on a render S11 after two
+     wrong turns: the chip was first loch-tinted, then retinted neutral, and neutral was still a
+     highlight — the fault was the box, never the hue. JetBrains Mono against Spectral serif is
+     already a hard contrast, so the face was carrying the "this is code" signal the whole time and
+     the background was decoration. Removing it also fixes the punctuation: a 5px right pad put a
+     visible gap between the chip and the following comma, which read as a stray space.
+     <pre> keeps its panel — a block container is a different thing from a word in a sentence. */
+  p code, li code { background: none; padding: 0; }
 
   /* Markdown block elements, added for short-form posts (the first posts authored as .md).
      The three hand-written HTML posts contain no <pre> and no <blockquote>, so nothing
-     already published changes. Inline <code> above is deliberately untouched for the same
-     reason: published pages use it. R4 holds — <pre> takes raised fill + radius and no
+     already published changed when these were added. (Inline <code> WAS later changed, S11 —
+     see the rule above.) R4 holds — <pre> takes raised fill + radius and no
      border (two of three); <blockquote> takes one border and nothing else. */
   pre {
     background: var(--bg-raised); border-radius: 6px; padding: 16px 18px;
@@ -144,11 +151,12 @@
   .meta .sep { color: var(--rule); }
   .meta .read { color: var(--loch); }
   .meta .rev b { color: var(--ink); font-weight: 400; }
-  /* prose highlight: loch wash, for steering the eye to a key phrase — use sparingly */
-  mark {
-    background: color-mix(in srgb, var(--loch) 18%, transparent);
-    color: inherit; padding: 0 3px; border-radius: 3px;
-  }
+  /* No prose-highlight device. <mark> was retired S10 and its last instance removed S11.
+     The rule that replaced it is about the COLOUR, not the tag: nothing in body prose takes an
+     accent-tinted background, because loch is the link colour and moss means "named evaluated
+     entity", so either one painted behind a non-link is a false affordance. Emphasis comes from
+     sentence construction and structure. Deliberately no `mark` rule here: an unstyled <mark>
+     falls back to the browser default, which is loud enough that nobody ships it by accident. */
   .lead p:first-child { font-size: 20px; line-height: 1.6; }
   .fig { margin: 32px 0 8px; }
   .fig-cap {
@@ -188,6 +196,11 @@
     body { font-size: 17px; }
     .wrap { padding: 0 18px; }
     .masthead .wrap { flex-wrap: wrap; gap: 10px; }
+    /* Narrow screens wrap code instead of scrolling it. At 420px a terminal-width
+       block hides ~46% of itself off-screen with no visible affordance, and a
+       sideways scroll nobody discovers is the same as truncated evidence. Desktop
+       keeps overflow-x: auto, where the overflow is marginal. */
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; }
   }
 </style>
 </head>
