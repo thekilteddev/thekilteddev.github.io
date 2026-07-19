@@ -107,6 +107,24 @@
   main a { color: var(--loch); text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; }
   code, .mono { font-family: var(--font-mono); font-size: 0.9em; }
   p code { background: color-mix(in srgb, var(--loch) 12%, transparent); padding: 1px 5px; border-radius: 4px; }
+
+  /* Markdown block elements, added for short-form posts (the first posts authored as .md).
+     The three hand-written HTML posts contain no <pre> and no <blockquote>, so nothing
+     already published changes. Inline <code> above is deliberately untouched for the same
+     reason: published pages use it. R4 holds — <pre> takes raised fill + radius and no
+     border (two of three); <blockquote> takes one border and nothing else. */
+  pre {
+    background: var(--bg-raised); border-radius: 6px; padding: 16px 18px;
+    margin: 0 0 24px; line-height: 1.5;
+    overflow-x: auto; /* the BLOCK scrolls so the PAGE never does */
+  }
+  pre code { background: none; padding: 0; font-size: 13px; }
+  blockquote {
+    margin: 0 0 24px; padding-left: 20px;
+    border-left: 2px solid var(--rule); color: var(--ink-dim);
+  }
+  blockquote p { margin-bottom: 12px; }
+  blockquote p:last-child { margin-bottom: 0; }
   .kicker {
     font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em;
     text-transform: uppercase; color: var(--loch); margin: 0 0 20px;
