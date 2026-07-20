@@ -134,6 +134,15 @@
      <pre> keeps its panel — a block container is a different thing from a word in a sentence. */
   p code, li code { background: none; padding: 0; }
 
+  /* Named entity in running prose (a tool, model, or product named inline). Colour only, no face
+     or size change, so it doesn't interrupt the reading face mid-sentence — the ledger-row
+     treatment in convergent-evidence (display face + bold + size bump) works there because those
+     rows are short and list-like; embedded across a long narrative, that much weight per name
+     reads as several things shouting at once when a sentence names more than one. First use:
+     nine-ways-to-talk-to-a-local-model, chosen over the ledger treatment on a side-by-side
+     render, S13. */
+  .entity { color: var(--moss); font-weight: 600; }
+
   /* Markdown block elements, added for short-form posts (the first posts authored as .md).
      The three hand-written HTML posts contain no <pre> and no <blockquote>, so nothing
      already published changed when these were added. (Inline <code> WAS later changed, S11 —
@@ -248,6 +257,16 @@
   .trial.yes::before { background: var(--loch); }
   .trial.no { color: var(--ink-dim); }
   .trial.no::before { border: 1.5px solid var(--ink-dim); }
+  /* Section-source: a small, quiet outbound link to the thing a section was actually about.
+     Deliberately separate from .entity — stacking a link (loch) on a moss-coloured name would
+     collide two signals on one word. Once per section, not per paragraph or per mention, same
+     register as .fig-cap (mono, small, uppercase label; the link itself carries colour, the
+     arrow and label stay dim). First trial: nine-ways-to-talk-to-a-local-model, S13. */
+  .section-source {
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--ink-dim); margin: -8px 0 24px;
+  }
+  .section-source a { color: var(--loch); text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; }
   /* Requirement ledger — six voices/candidates against N requirements, three states because two
      would lie: met, broke, and never established (a candidate never run far enough to find out).
      A real table (free header association), hairlines only, no box/fill/radius so R4 cannot apply.
