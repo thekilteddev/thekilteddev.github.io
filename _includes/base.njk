@@ -151,6 +151,19 @@
   }
   blockquote p { margin-bottom: 12px; }
   blockquote p:last-child { margin-bottom: 0; }
+  /* table: first use is the benchmark grid in "what-really-fits-in-8gb-vram" (S13). No fill, no
+     radius, one rule per row — same no-container family as blockquote. Numeric-looking columns
+     stay body face; the data is the emphasis, not a device. */
+  table {
+    width: 100%; border-collapse: collapse; margin: 0 0 24px; font-size: 15px;
+    overflow-x: auto; display: block;
+  }
+  thead, tbody, tr { display: table; width: 100%; table-layout: fixed; }
+  th, td { text-align: left; padding: 10px 16px 10px 0; border-bottom: 1px solid var(--rule); }
+  thead th {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim); padding-bottom: 8px;
+  }
   .kicker {
     font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em;
     text-transform: uppercase; color: var(--loch); margin: 0 0 20px;
