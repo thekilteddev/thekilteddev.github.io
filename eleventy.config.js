@@ -3,6 +3,8 @@ import rssPlugin from "@11ty/eleventy-plugin-rss";
 export default function (eleventyConfig) {
   eleventyConfig.addPlugin(rssPlugin);
   eleventyConfig.addPassthroughCopy("favicon.svg");
+  // Site-wide Open Graph card. Regenerate with: node tools/cards/render-banner.mjs
+  eleventyConfig.addPassthroughCopy("og-default.png");
 
   // Reading time from the rendered post body. ~220 wpm, technical prose, min 1.
   // Strip <style>/<script> bodies first, else per-post CSS is counted as words.
