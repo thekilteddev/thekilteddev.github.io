@@ -183,6 +183,58 @@
     text-transform: uppercase; color: var(--ink-dim); margin: 16px 0 0;
   }
   .fig-cap b { color: var(--loch); font-weight: 500; }
+  /* Labelled-row list: a short mono label, then a line of prose. Ported to base S16 from
+     route-dont-guess's own scoped .taxes/.tax-* (pilot-era), generically renamed on its
+     second use (the burn-window cold open in invoked-not-executed). Borders only — no fill,
+     no radius — the same no-container family as .pull and the table. The .dominant modifier
+     flags the one row that carries the most weight and prints a small "dominant" tag. */
+  .stat-rows { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin: 32px 0 8px; }
+  .stat-row {
+    display: grid; grid-template-columns: minmax(0,140px) 1fr; gap: 20px;
+    padding: 20px 0; border-top: 1px solid var(--rule); align-items: baseline;
+  }
+  .stat-row:first-child { border-top: none; }
+  .stat-name {
+    font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--loch); font-weight: 500;
+  }
+  .stat-desc { font-size: 16px; line-height: 1.55; color: var(--ink); margin: 0; }
+  .stat-row.dominant .stat-name { color: var(--moss); }
+  .stat-row.dominant .stat-name::after {
+    content: "dominant"; display: block; margin-top: 6px; font-size: 11px;
+    letter-spacing: 0.06em; color: var(--ink-dim);
+  }
+  /* Discrete-trial outcome matrix: a small grid of binary results across two axes (here
+     phrasing x model tier). New S16 in invoked-not-executed. Kept generic — any two-axis set
+     of pass/fail trials fits it unchanged (R1). House no-container grammar: hairline rules
+     only, no cell fill, no radius, so the 6-cell matrix cannot read as the filled-tile
+     fingerprint. State is a mark, not a tile — a solid block for the positive outcome
+     (echoing the wordmark cursor), a hollow outline for the negative. Loch marks the positive
+     as figure-series-1, never as an interactive affordance. */
+  .trials {
+    display: grid; grid-template-columns: minmax(0,1fr) minmax(0,132px) minmax(0,132px);
+    border-top: 1px solid var(--rule); margin: 32px 0 8px;
+  }
+  .trial-h {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink-dim); font-weight: 500;
+    padding: 10px 14px 10px 0; border-bottom: 1px solid var(--rule);
+  }
+  .trial-r {
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.03em;
+    text-transform: uppercase; color: var(--ink); font-weight: 500;
+    padding: 15px 14px 15px 0; border-bottom: 1px solid var(--rule); align-self: center;
+  }
+  .trial {
+    display: flex; align-items: center; gap: 9px;
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.03em;
+    padding: 15px 14px 15px 0; border-bottom: 1px solid var(--rule);
+  }
+  .trial::before { content: ""; width: 11px; height: 11px; flex: none; box-sizing: border-box; }
+  .trial.yes { color: var(--loch); }
+  .trial.yes::before { background: var(--loch); }
+  .trial.no { color: var(--ink-dim); }
+  .trial.no::before { border: 1.5px solid var(--ink-dim); }
   /* Requirement ledger — six voices/candidates against N requirements, three states because two
      would lie: met, broke, and never established (a candidate never run far enough to find out).
      A real table (free header association), hairlines only, no box/fill/radius so R4 cannot apply.
@@ -276,6 +328,10 @@
        sideways scroll nobody discovers is the same as truncated evidence. Desktop
        keeps overflow-x: auto, where the overflow is marginal. */
     pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+    .stat-row { grid-template-columns: 1fr; gap: 6px; }
+    /* Matrix stays a matrix on mobile — proportional columns keep the two data cells wide
+       enough for "not invoked" and let the row label wrap rather than overflow. */
+    .trials { grid-template-columns: minmax(0,1.1fr) 1fr 1fr; }
   }
 </style>
 </head>
