@@ -18,7 +18,16 @@ permalink: /cloning-a-copy/
 ---
 
 <section class="lead">
-<p>A product walkthrough needed a narrator: not a person, a synthesised voice reading a script over the screen recording. Simple enough on paper. We wanted four things from that voice at once, and it turned out you cannot fully satisfy all four together. It had to sound Scottish, because the product carries a real name behind it and a bland mid-Atlantic voice reading it back would have been wrong from the first sentence. It had to sound natural, not like a robot reading a list. It had to run local, free, and offline, no per-render cloud bill, no dependency on someone else's server staying up. And it had to be obtainable: a thing we could actually get running on this machine, today.</p>
+<p>A product walkthrough needed a narrator: not a person, a synthesised voice reading a script over the screen recording. Simple enough on paper.</p>
+
+<p>We wanted four things from that voice at once, and it turned out you cannot fully satisfy all four together.</p>
+
+<div class="stat-rows">
+  <div class="stat-row"><div class="stat-name">Scottish</div><p class="stat-desc">Because the product carries a real name behind it, and a bland mid-Atlantic voice reading it back would have been wrong from the first sentence.</p></div>
+  <div class="stat-row"><div class="stat-name">Natural</div><p class="stat-desc">Not like a robot reading a list.</p></div>
+  <div class="stat-row"><div class="stat-name">Local</div><p class="stat-desc">Free and offline, no per-render cloud bill, no dependency on someone else's server staying up.</p></div>
+  <div class="stat-row"><div class="stat-name">Obtainable</div><p class="stat-desc">A thing we could actually get running on this machine, today.</p></div>
+</div>
 
 <p>Almost every option we tried hit three of those and quietly broke the fourth. The whole hunt is really about which corner each candidate painted us into, and how the problem eventually stopped having corners at all.</p>
 </section>
@@ -29,7 +38,9 @@ permalink: /cloning-a-copy/
 
 <p>We started with <a href="https://github.com/rhasspy/piper">Piper</a>, a small, fast, fully local text-to-speech engine, using a voice called <code>en_GB-alba-medium</code>. Alba was the one that mattered: a genuine Scottish speaker. Local, free, offline, right accent. Three of four, immediately.</p>
 
-<p>Two problems. The first was almost funny: Piper read grouped numbers wrong. A figure like 222,000 didn't come out as "two hundred and twenty-two thousand," it came out mangled. We fixed it by rewriting the script instead of the engine: every figure got spelled out as words before it ever reached the synthesiser. That fix turned out to be engine-independent. It survived every voice we swapped in after, which was the first small lesson of the whole hunt. Fix the input, not the tool, and the fix outlives the tool.</p>
+<p>Two problems. The first was almost funny: Piper read grouped numbers wrong. A figure like 222,000 didn't come out as "two hundred and twenty-two thousand," it came out mangled. We fixed it by rewriting the script instead of the engine: every figure got spelled out as words before it ever reached the synthesiser. That fix turned out to be engine-independent. It survived every voice we swapped in after, which was the first small lesson of the whole hunt.</p>
+
+<p class="pull">Fix the input, not the tool, and the fix outlives the tool.</p>
 
 <p>The second problem was the real wall. Individual words were fine; whole sentences were robotic. The rise and fall across a sentence, the prosody, was flat, and that isn't a knob you can turn on Piper. Sentence-level prosody is a hard ceiling of that engine. Getting past it meant leaving Piper, and that's where the corners started.</p>
 
@@ -43,7 +54,9 @@ permalink: /cloning-a-copy/
 
 <p><strong><a href="https://huggingface.co/hexgrad/Kokoro-82M">Kokoro-82M</a></strong>, a different local engine, voice <code>bf_emma</code>. Clearer than Piper, genuinely more natural, and judged "really bland and unnatural compared to the alba voice." It won on naturalness and lost on character. We kept it wired in behind a switch, since it worked and there was no reason to delete working code.</p>
 
-<p><strong><a href="https://github.com/SWivid/F5-TTS">F5-TTS</a>, cloning alba.</strong> The clever idea: take an engine with far better prosody than Piper and clone the alba voice into it. Best of both, alba's accent riding F5's flow. The result was "brutal, loses the alba and sounds more English," heard instantly. Cloning a synthetic reference, a voice that was itself already generated, flattened the very character we were trying to keep. Getting even that far meant building an isolated Python environment on the CPU, because the machine's GPU stack was too new for the tool (more on that irony later). Won on flow, lost on accent, cost real setup time. Rejected.</p>
+<p><strong><a href="https://github.com/SWivid/F5-TTS">F5-TTS</a>, cloning alba.</strong> The clever idea: take an engine with far better prosody than Piper and clone the alba voice into it. Best of both, alba's accent riding F5's flow. The result was "brutal, loses the alba and sounds more English," heard instantly. Cloning a synthetic reference, a voice that was itself already generated, flattened the very character we were trying to keep. Getting even that far meant building an isolated Python environment on the CPU, because the machine's GPU stack was too new for the tool (more on that irony later).</p>
+
+<p>Won on flow, lost on accent, cost real setup time. Rejected.</p>
 
 <p><strong>Cloud, <a href="https://elevenlabs.io">ElevenLabs</a>.</strong> The one path to genuinely Scottish and natural at once. The two free Scottish female voices weren't right, and paying for the better tier wasn't on the table. Parked, not killed. Worth noting the trade would have been softer than it sounds: it's cloud at build time only, you synthesise the script once and the video that ships is a local file. But parked is parked.</p>
 
@@ -156,7 +169,13 @@ permalink: /cloning-a-copy/
 
 <h2><span class="h2-num">stage 1 of 3</span>Cheapest first, and a failure that explained everything</h2>
 
-<p>We staged it cheapest-first: try the free thing before the expensive thing. Stage 1 was zero-shot, handing the expressive engine (XTTS-v2) a real human clip of alba and asking it to imitate. Stage 2, if that failed, was to actually fine-tune the engine on the corpus. Stage 3, if that failed too, was cloud.</p>
+<p>We staged it cheapest-first: try the free thing before the expensive thing.</p>
+
+<div class="stat-rows">
+  <div class="stat-row"><div class="stat-name">Stage 1</div><p class="stat-desc">Zero-shot: hand the expressive engine (XTTS-v2) a real human clip of alba and ask it to imitate.</p></div>
+  <div class="stat-row"><div class="stat-name">Stage 2</div><p class="stat-desc">If that failed, actually fine-tune the engine on the corpus.</p></div>
+  <div class="stat-row"><div class="stat-name">Stage 3</div><p class="stat-desc">If that failed too, cloud.</p></div>
+</div>
 
 <p>Stage 1 failed, as predicted, and the failure was the useful part. Even with a genuine human reference, the voice "wildly drifts off Scottish." Here's why, and it's the structural lesson of the whole hunt: zero-shot cloning copies the timbre but regenerates the prosody from the engine's own base model, and that base model is English-dominant. The accent gets ironed out no matter how good or how long the reference clip is. That single fact retroactively explained the F5 disaster too.</p>
 
@@ -174,7 +193,7 @@ permalink: /cloning-a-copy/
 
 <p>The machine's antivirus intercepts SSL, which breaks the package installer for any fresh environment. We had to point it at the antivirus's own certificate to install anything at all. The training library demanded a recent version of a dependency, but the newest version of that dependency had deleted a function the library still called, so we pinned it below the break. The obvious PyTorch build wanted an extra media component that's painful to install on Windows; we pinned an earlier, matched build instead, and even that took force because the installer kept deciding the wrong build was already satisfied and skipping it. On Windows, the training loop has to be guarded with the standard <code>if __name__ == "__main__"</code> incantation, or the parallel data-loading workers each re-run the whole training script and collide on a locked file.</p>
 
-<p>The GPU is an RTX 5060 with 8GB, but it's also driving the monitor, so only about 5GB was actually free, which forced the smallest possible batch size. And the natural move to save memory, half-precision training, produced <code>loss = nan</code> from the very first step: half-precision overflowed inside the model's forward pass, and only full precision at batch-size-one trained cleanly. The reference recipe we were adapting had quietly omitted half-precision for exactly this reason. It always tells you afterwards.</p>
+<p>The GPU is an RTX 5060 with 8GB VRAM, but it's also driving the monitor, so only about 5GB was actually free, which forced the smallest possible batch size. And the natural move to save memory, half-precision training, produced <code>loss = nan</code> from the very first step: half-precision overflowed inside the model's forward pass, and only full precision at batch-size-one trained cleanly. The reference recipe we were adapting had quietly omitted half-precision for exactly this reason. It always tells you afterwards.</p>
 
 <p>Every one of those was a full stop until it was solved. None of them was the interesting problem. All of them stood between us and the interesting problem.</p>
 

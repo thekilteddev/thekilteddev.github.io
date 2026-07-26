@@ -263,17 +263,35 @@
     padding: 8px 0 20px;
   }
   .ledger tr.why em { font-style: italic; color: var(--ink); }
-  /* State glyphs. 9px marks, not containers. */
-  .m { display: inline-block; width: 9px; height: 9px; position: relative; top: -2px; }
-  .m.met { background: var(--loch); }
-  .m.broke { width: 11px; height: 2px; top: -5px; background: var(--bad); }
-  .m.unrun { border: 1px solid var(--ink-dim); opacity: .55; }
+  /* Visually hidden but screen-reader-readable. Only reads state text ("met"/"broke") next to a
+     cell's glyph — the key at the bottom carries the same words visibly, so nothing is lost. */
+  .sr {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+  }
+  /* State glyphs: tick / cross / circle, using the site's existing good/bad/warn semantic tokens
+     rather than inventing new colour. Drawn with CSS strokes, not an icon font or emoji, so every
+     glyph carries the same weight and theme-adapts for free. */
+  .m { display: inline-block; width: 11px; height: 11px; position: relative; top: -1px; margin-right: 6px; }
+  .m.met {
+    width: 9px; height: 5px; margin-right: 8px;
+    border-left: 2px solid var(--good); border-bottom: 2px solid var(--good);
+    transform: rotate(-45deg); top: -3px;
+  }
+  .m.broke { background: none; }
+  .m.broke::before, .m.broke::after {
+    content: ""; position: absolute; left: 4px; top: -1px;
+    width: 2px; height: 12px; background: var(--bad); border-radius: 1px;
+  }
+  .m.broke::before { transform: rotate(45deg); }
+  .m.broke::after { transform: rotate(-45deg); }
+  .m.unrun { border: 1.5px solid var(--warn); border-radius: 50%; }
   .key {
     display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 20px;
     font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.05em;
     text-transform: uppercase; color: var(--ink-dim);
   }
-  .key span { display: inline-flex; align-items: baseline; gap: 8px; }
+  .key span { display: inline-flex; align-items: baseline; gap: 10px; }
   @media (max-width: 620px) {
     /* The ledger unstacks: each voice becomes its own hairline-ruled block, axes carried inline
        as labels so nothing is inferred from column position. */
