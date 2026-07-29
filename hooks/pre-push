@@ -1,0 +1,29 @@
+#!/bin/bash
+# pre-push: block pushing any post whose frontmatter `date:` is after today.
+# eleventy.config.js has no future-date filter (globs + sorts every post), so a
+# pushed future-dated post goes live immediately instead of waiting for its slot.
+# Not version-tracked into .git/hooks/ automatically — reinstall after a fresh
+# clone with: cp hooks/pre-push .git/hooks/pre-push && chmod +x .git/hooks/pre-push
+
+today=$(date +%Y-%m-%d)
+blocked=0
+
+empty_tree="4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "0000000000000000000000000000000000000000" ] && continue
+  [ "$remote_sha" = "0000000000000000000000000000000000000000" ] && remote_sha="$empty_tree"
+
+  files=$(git diff --name-only "$remote_sha" "$local_sha" -- posts/ 2>/dev/null)
+  for f in $files; do
+    post_date=$(git show "$local_sha:$f" 2>/dev/null | grep -m1 '^date:' | sed -E 's/^date:[[:space:]]*//')
+    if [ -n "$post_date" ] && [[ "$post_date" > "$today" ]]; then
+      echo "pre-push: BLOCKED -- $f is dated $post_date, after today ($today)." >&2
+      echo "  Hold this commit until its slot date, or push via the split-branch" >&2
+      echo "  technique (TOOLBOX.md) to exclude it from what actually goes out." >&2
+      blocked=1
+    fi
+  done
+done
+
+exit $blocked
