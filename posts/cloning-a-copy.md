@@ -151,7 +151,7 @@ permalink: /cloning-a-copy/
 
 <p>So we stopped chasing and accepted a ceiling. The voice we shipped first was alba again, but with a phrasing pass over the whole script: long strings broken into short breath-group sentences, figures landing at the ends of sentences where the voice naturally slows, the brand name written the way it should sound. A couple of prosody settings pushed to slow it down and loosen it up. The honest verdict was "a step up from robot." Tolerable. It shipped.</p>
 
-<p>If the story ended there, it would be a fine wee story about accepting good-enough. It didn't end there, because of one fact we didn't have yet.</p>
+<p>If the story ended there, it would be a fine story about accepting good-enough. It didn't end there, because of one fact we didn't have yet.</p>
 
 </section>
 
