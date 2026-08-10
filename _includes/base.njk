@@ -173,6 +173,16 @@
     font-family: var(--font-mono); font-size: 11px; font-weight: 500;
     letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim); padding-bottom: 8px;
   }
+  /* Inline status label — one claim/verdict per table cell. Flat tint or thin border only, never
+     both (R4-clean by construction). First use: three "ruled-out theories" tables, S37. */
+  .tag {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em;
+    padding: 2px 8px; border-radius: 3px; display: inline-block; white-space: nowrap;
+  }
+  .tag.good { color: var(--good); background: color-mix(in srgb, var(--good) 15%, transparent); }
+  .tag.warn { color: var(--warn); background: color-mix(in srgb, var(--warn) 15%, transparent); }
+  .tag.bad  { color: var(--bad);  background: color-mix(in srgb, var(--bad) 15%, transparent); }
+  .tag.flat { color: var(--ink-dim); border: 1px solid var(--rule); }
   .kicker {
     font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em;
     text-transform: uppercase; color: var(--loch); margin: 0 0 20px;

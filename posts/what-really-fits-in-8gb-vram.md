@@ -177,6 +177,12 @@ That has a practical edge: a fit-estimating tool used on this machine calculates
 VRAM rather than free VRAM, so its recommendations need hand-adjusting for whatever the desktop is
 already holding.
 
+| Theory | Evidence against | Verdict |
+|---|---|---|
+| Scheduler bug — full model loaded to GPU instead of the working CPU split | Full memory breakdown showed the correct 3.2–4GB GPU buffer against 13.5–14.3GB in pinned host memory | <span class="tag bad">Ruled out</span> |
+| Some other app transiently holding VRAM | Retested with the model fully unloaded and 6.1GB free — still failed | <span class="tag bad">Ruled out</span> |
+| Alias silently recreated 8 days earlier, inheriting the default 32K context the model had never been verified at | Single-variable test: loads at 16,384 every time, fails at 32,768 every time | <span class="tag good">Real cause</span> |
+
 </section>
 
 <section>
