@@ -15,6 +15,28 @@ bylineTags: ["local models", "GPU memory"]
 permalink: /what-really-fits-in-8gb-vram/
 ---
 
+<style>
+  /* Proportional split bar: one quantity divided into two real parts, not two separate quantities
+     compared side by side (that's what .ratio already does, reused unchanged below for the t/s
+     cliff). No existing device draws a subdivision-of-a-whole, per BRAND's S33 amendment ("no
+     existing device fits this content's shape"). Flat fills only, no radius/border — R4-safe.
+     Segment widths are the real proportion (7,899 / 24,144 and 16,245 / 24,144), not eyeballed.
+     Key typography borrows .ratio-key's own rules verbatim for consistency. First use — a
+     promote-on-second-use candidate, per BRAND.md, if another piece needs the same shape. */
+  .split-bar { display: flex; width: 100%; height: 32px; }
+  .split-bar .s1 { background: var(--loch); }
+  .split-bar .s2 { background: var(--moss); }
+  .split-key { display: flex; width: 100%; margin-top: 12px; }
+  .split-key b {
+    font-family: var(--font-display); font-weight: 700; font-size: 19px;
+    letter-spacing: -0.015em; color: var(--ink); display: block; margin-bottom: 4px;
+  }
+  .split-key span {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink-dim); display: block;
+  }
+</style>
+
 <section class="lead">
 <p>Every question about running models locally reduces to one question: will it fit. Which model,
 which runtime, which quantisation, whether the thing is usable or a slideshow: all of it comes
@@ -45,6 +67,18 @@ Shared Memory:     16245 MB
 card plus a slice of system RAM the driver treats as overflow, half the machine's 31.7GB, the
 standard Windows allocation. Only the dedicated figure decides whether a model loads.
 
+<figure class="fig">
+<div class="split-bar">
+  <div class="s1" style="flex-basis: 32.71%"></div>
+  <div class="s2" style="flex-basis: 67.29%"></div>
+</div>
+<div class="split-key">
+  <div style="flex-basis: 32.71%"><b>7,899 MB</b><span>dedicated &mdash; the only part a model can use</span></div>
+  <div style="flex-basis: 67.29%"><b>16,245 MB</b><span>shared &mdash; claimed identically by 3 other adapters</span></div>
+</div>
+<figcaption class="fig-cap">Windows reports <b>24,144 MB</b> of display memory. Less than a third of it is real.</figcaption>
+</figure>
+
 Two details make the trap worse than a single mislabelled number. The shared pool isn't the
 graphics card's at all, and every display adapter on the machine claims it: the integrated Intel
 graphics, the RTX 5060, and two DisplayLink devices all report the same 16,245 MB. Add up what the
@@ -60,6 +94,18 @@ just lets you keep going, wondering why everything feels off. A 9B model at 32K 
 entirely in VRAM at 5.9GB and generates 51.5 tokens/sec. Push the context to 64K and it needs
 7.5GB, spills to an 18/82 split, and drops to 22.6 tokens/sec. Same model, same machine, same
 quantisation. One setting, less than half the speed.
+
+<figure class="fig">
+<div class="ratio">
+  <div class="ratio-col s1"><div class="ratio-bar" style="height: 100%"></div></div>
+  <div class="ratio-col"><div class="ratio-bar" style="height: 43.9%"></div></div>
+</div>
+<div class="ratio-key">
+  <div><b>51.5 t/s</b><span>32K &middot; 5.9GB &middot; 100% GPU</span></div>
+  <div><b>22.6 t/s</b><span>64K &middot; 7.5GB &middot; 18/82 split</span></div>
+</div>
+<figcaption class="fig-cap">Same model, same quantisation. Doubling the context more than halves the speed.</figcaption>
+</figure>
 
 None of this requires taking anyone's word for it: the breakdown is four lines down the Display
 tab on every Windows machine there is.
@@ -159,6 +205,14 @@ Nobody reads a benchmark file for internal consistency after writing it, so the 
 there quietly. A single-variable test settled it: at 16,384 the model loads and generates every
 time; at 32,768 it fails every time. The fix was re-pinning the alias: a configuration
 correction, not a code change.
+
+<figure class="fig">
+<div class="stat-rows">
+  <div class="stat-row"><div class="stat-name">16,384</div><p class="stat-desc">Loads and generates, every time tested. <span class="tag good">Confirmed</span></p></div>
+  <div class="stat-row"><div class="stat-name">32,768</div><p class="stat-desc">Fails, every time tested &mdash; same model, same split. <span class="tag bad">Confirmed</span></p></div>
+</div>
+<figcaption class="fig-cap">One context value, doubled. The model didn't slow down at the boundary &mdash; it stopped loading at all.</figcaption>
+</figure>
 
 </section>
 
