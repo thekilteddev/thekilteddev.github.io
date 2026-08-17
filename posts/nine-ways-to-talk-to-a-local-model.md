@@ -26,17 +26,22 @@ most model comparisons are measuring something else.</p>
 
 <section>
 
-| Tool | Good at | The number that mattered |
-|---|---|---|
-| <span class="entity">Ollama</span> | the default, broadly reliable | 32.9 t/s gen on a 30B MoE |
-| <span class="entity">llama.cpp</span> | fastest, once tuned | 27.1 t/s vs Ollama's 23.4 |
-| <span class="entity">LM Studio</span> | document extraction to file | 10 rows, exact match, no invented values |
-| <span class="entity">little-coder</span> | small-model coding harness | 8/8 in 2.1 min, then a version bump broke it |
-| <span class="entity">Unsloth Studio</span> | fastest single-file result | unusable past a 4096-token ceiling |
-| <span class="entity">Goose</span> | agent framework, right idea | 30% GPU vs 98%, one setting |
-| <span class="entity">Claude Code</span> as client | n/a | all three connection methods fail |
-| <span class="entity">Odysseus</span> | the most polished interface | 0/8, only one of three files actually saved |
-| <span class="entity">Continue.dev</span> | autocomplete, nothing else does it | 355MB free at 32K, no room for anything else |
+<figure class="fig">
+
+| Tool | Ran the benchmark | Wrote what it claimed | The number |
+|---|---|---|---|
+| <span class="entity">little-coder</span> | <span class="tag warn">8/8, then broke</span> | <span class="tag flat">n/a</span> | 2.1 min |
+| <span class="entity">Ollama</span> | <span class="tag flat">baseline</span> | <span class="tag good">yes</span> | 32.9 t/s gen |
+| <span class="entity">llama.cpp</span> | <span class="tag good">6/6 tool sel.</span> | <span class="tag good">yes</span> | 27.1 vs 23.4 t/s |
+| <span class="entity">LM Studio</span> | <span class="tag flat">not run</span> | <span class="tag good">10 rows exact</span> | 3 attempts |
+| <span class="entity">Goose</span> | <span class="tag flat">not run</span> | <span class="tag warn">via Ollama only</span> | 98% vs 30% GPU |
+| <span class="entity">Continue.dev</span> | <span class="tag flat">n/a</span> | <span class="tag warn">no room left</span> | 355MB free |
+| <span class="entity">Unsloth Studio</span> | <span class="tag bad">incomparable</span> | <span class="tag flat">n/a</span> | 4,096-token ceiling |
+| <span class="entity">Claude Code</span> | <span class="tag bad">3 methods, 3 fails</span> | <span class="tag flat">n/a</span> | 0 of 3 connected |
+| <span class="entity">Odysseus</span> | <span class="tag bad">0/8</span> | <span class="tag bad">1 of 3 files</span> | 82,000 stars |
+
+<figcaption class="fig-cap">Nine tools, one GPU, one afternoon each. The "wrote what it claimed" column is the one this piece is actually about, and the only column where the most polished tool comes last.</figcaption>
+</figure>
 
 </section>
 
@@ -78,6 +83,18 @@ Untuned, the same path runs at 13 tokens/sec, less than half. The default config
 faster runtime is slower than the alternative, which is worth remembering whenever a benchmark
 reports that one tool beats another.
 
+<figure class="fig">
+  <div class="ratio">
+    <div class="ratio-col s1"><div class="ratio-bar" style="height: 100%"></div></div>
+    <div class="ratio-col"><div class="ratio-bar" style="height: 47.97%"></div></div>
+  </div>
+  <div class="ratio-key">
+    <div><b>27.1 t/s</b><span>tuned: mmap off, 14 threads, expert layers balanced</span></div>
+    <div><b>13 t/s</b><span>untuned: the same runtime's own defaults</span></div>
+  </div>
+  <figcaption class="fig-cap">The faster runtime, running its own default configuration, loses to the alternative it's supposed to beat. The margin came from tuning, not from the runtime itself.</figcaption>
+</figure>
+
 <span class="entity">llama.cpp</span>'s server also has the most complete tool-calling story of
 anything tested here. Given a toy arithmetic tool, it emitted five valid parseable calls out of
 five. Given three near-identical tools and six questions, it selected correctly six times out of
@@ -105,6 +122,20 @@ every usage quantity and cost matching the source exactly. No invented values.
 Getting there took three attempts. The first two failed with filesystem permission errors even
 after access was explicitly approved through its own dialog. The difference was the prompt: "the
 files in your workspace" failed, and naming the absolute directory worked.
+
+<figure class="fig">
+  <div class="stat-rows">
+    <div class="stat-row">
+      <div class="stat-name">"The files in your workspace"</div>
+      <p class="stat-desc">Filesystem permission errors, twice, even with access already approved through the dialog.</p>
+    </div>
+    <div class="stat-row">
+      <div class="stat-name">The absolute directory, named</div>
+      <p class="stat-desc">Worked. Same permission, same dialog, different prompt.</p>
+    </div>
+  </div>
+  <figcaption class="fig-cap">Same access, same dialog approval, two attempts apart. The only variable that changed was how the path was phrased.</figcaption>
+</figure>
 
 Whether the model requested bad relative paths or the permission scope failed to resolve them was
 never determined. The rule is empirical and it's reliable: give it absolute paths.
@@ -151,6 +182,35 @@ taken through it incomparable to anything else. A tool that silently runs at a f
 context you configured is worse than one that refuses, because the number it shows you is a number
 you will use.
 
+<style>
+  /* Trial device, not promoted. There's no second real number here to bar-chart against 4,096 -
+     the article says "regardless of what the interface is set to", not a specific configured
+     value, so drawing a proportional comparison would mean inventing one. Instead: four unlabeled
+     settings (any dial position) each drop to the same flat ceiling. The constant is the finding,
+     not a ratio. Hairline + hollow ticks only, no fill on the top row, one flat fill on the
+     ceiling bar - R4-clean by construction. */
+  .ceil-fig { margin: 0; }
+</style>
+
+<figure class="fig">
+  <svg class="ceil-fig" viewBox="0 0 660 150" role="img" aria-label="Four different context-window settings, positioned left to right, each drop to the identical result: an effective ceiling of 4,096 tokens, regardless of what was configured.">
+    <text x="0" y="12" font-family="var(--font-mono)" font-size="10.5px" letter-spacing="0.05em" text-transform="uppercase" fill="var(--ink-dim)">Whatever the context window is set to</text>
+    <line x1="60" y1="26" x2="600" y2="26" stroke="var(--rule)" stroke-width="1"></line>
+    <circle cx="140" cy="26" r="4" fill="none" stroke="var(--ink-dim)" stroke-width="1.5"></circle>
+    <circle cx="280" cy="26" r="4" fill="none" stroke="var(--ink-dim)" stroke-width="1.5"></circle>
+    <circle cx="420" cy="26" r="4" fill="none" stroke="var(--ink-dim)" stroke-width="1.5"></circle>
+    <circle cx="560" cy="26" r="4" fill="none" stroke="var(--ink-dim)" stroke-width="1.5"></circle>
+    <line x1="140" y1="30" x2="140" y2="104" stroke="var(--rule)" stroke-width="1" stroke-dasharray="3 3"></line>
+    <line x1="280" y1="30" x2="280" y2="104" stroke="var(--rule)" stroke-width="1" stroke-dasharray="3 3"></line>
+    <line x1="420" y1="30" x2="420" y2="104" stroke="var(--rule)" stroke-width="1" stroke-dasharray="3 3"></line>
+    <line x1="560" y1="30" x2="560" y2="104" stroke="var(--rule)" stroke-width="1" stroke-dasharray="3 3"></line>
+    <line x1="60" y1="104" x2="600" y2="104" stroke="var(--bad)" stroke-width="3"></line>
+    <text x="0" y="126" font-family="var(--font-display)" font-weight="700" font-size="22" fill="var(--ink)">4,096</text>
+    <text x="86" y="126" font-family="var(--font-mono)" font-size="11px" fill="var(--ink-dim)">the effective ceiling, every time</text>
+  </svg>
+  <figcaption class="fig-cap">Four positions on the dial. One result. The number the interface shows you is not the number you get.</figcaption>
+</figure>
+
 It also gets flagged as malware by the antivirus on this machine, which is a false positive, and
 which is its own small saga.
 
@@ -188,6 +248,24 @@ Three connection methods were tested. Setting the API base URL directly, which p
 without also setting an auth token to a dummy value. A proxy shim, which worked and ran at roughly
 two and a half minutes per response on CPU offload. And the runtime's own native launch command,
 which produced a model hallucinating unrelated tasks and emitting raw tool-call syntax as text.
+
+<figure class="fig">
+  <div class="stat-rows">
+    <div class="stat-row">
+      <div class="stat-name">API base URL</div>
+      <p class="stat-desc">No output at all, unless an auth token is also set to a dummy value.</p>
+    </div>
+    <div class="stat-row">
+      <div class="stat-name">Proxy shim</div>
+      <p class="stat-desc">Worked. Roughly two and a half minutes per response on CPU offload.</p>
+    </div>
+    <div class="stat-row">
+      <div class="stat-name">Native launch command</div>
+      <p class="stat-desc">The model hallucinated unrelated tasks and emitted raw tool-call syntax as text.</p>
+    </div>
+  </div>
+  <figcaption class="fig-cap">Three different failure shapes, one root cause underneath all three.</figcaption>
+</figure>
 
 All three fail, and they fail for the same reason: **local models do not parse
 <span class="entity">Claude Code</span>'s system prompt format.** That's not a configuration
@@ -238,6 +316,24 @@ A 4B model completes a fill-in-the-middle hole in 209 to 252 milliseconds at 127
 comfortably inside the budget where ghost text feels helpful rather than laggy. A 9B does it in
 around 328 milliseconds. A 14B coder model, the one nominally built for this, takes 2.5 seconds,
 because it spills to CPU, and rambles past the hole into inventing further functions.
+
+<figure class="fig">
+  <div class="stat-rows">
+    <div class="stat-row">
+      <div class="stat-name">4B model</div>
+      <p class="stat-desc">209 to 252ms at 127 t/s. 1GB of video memory still free at 32K context.</p>
+    </div>
+    <div class="stat-row">
+      <div class="stat-name">9B model</div>
+      <p class="stat-desc">Around 328ms. Only 355MB of video memory free at 32K context.</p>
+    </div>
+    <div class="stat-row">
+      <div class="stat-name">14B model</div>
+      <p class="stat-desc">2.5 seconds. Spills to CPU and rambles past the hole, inventing further functions.</p>
+    </div>
+  </div>
+  <figcaption class="fig-cap">Bigger is not automatically better for this job. The measurement that mattered wasn't speed, it was what was left of the GPU once the autocomplete model was warm.</figcaption>
+</figure>
 
 The measurement that mattered was not speed, though. With the autocomplete model warm at 32K
 context, free video memory drops to about 355MB for the 9B and 1GB for the 4B. **There is no room
@@ -297,5 +393,44 @@ work you have done, the benchmark is a formality you are performing for the shap
 Nine tools. The differences that mattered were reliability, offload behaviour, honesty about what
 was actually written to disk, and whether the thing exposed the one control the model needed. None
 of that shows up in a table of tokens per second.
+
+<style>
+  /* Trial device, not yet promoted: a claimed-vs-true gap chart. Dashed hairline track is what the
+     tool reported; a solid bar is what a file listing actually showed. Hairline + one flat fill,
+     R4-clean by construction. The little-coder row draws its true bar at zero width, same principle
+     as .ratio's own zero-column precedent: the absence is the finding, not a missing bar.
+     Interaction is a trial, explicitly outside BRAND.md's current static-reading-surface rule:
+     hover/focus on a row dims the other, CSS only, keyboard-reachable, no motion under
+     prefers-reduced-motion, degrades to a plain static figure with no JS and no touch support. */
+  .gap-fig { margin: 0; }
+  .gap-fig .gr { transition: opacity 160ms ease; }
+  .gap-fig:hover .gr, .gap-fig:focus-within .gr { opacity: 0.35; }
+  .gap-fig .gr:hover, .gap-fig .gr:focus-within { opacity: 1; }
+  .gap-fig .gr:focus-visible { outline: 1px solid var(--loch); outline-offset: 4px; }
+  @media (prefers-reduced-motion: reduce) { .gap-fig .gr { transition: none; } }
+  @media (hover: none) { .gap-fig:hover .gr { opacity: 1; } }
+</style>
+
+<figure class="fig">
+  <svg class="gap-fig" viewBox="0 0 660 130" role="img" aria-label="Two tools reported success without checking the result. Odysseus's transcript showed three files written; the disk had one. little-coder exited with code zero, a clean reply, and had written no file at all.">
+    <g class="gr" tabindex="0">
+      <text x="0" y="14" font-family="var(--font-display)" font-weight="700" font-size="14" fill="var(--moss)">Odysseus</text>
+      <rect x="180" y="4" width="420" height="14" fill="none" stroke="var(--rule)" stroke-width="1" stroke-dasharray="3 3"></rect>
+      <rect x="180" y="4" width="140" height="14" fill="var(--bad)"></rect>
+      <text x="610" y="15" text-anchor="end" font-family="var(--font-mono)" font-size="12" fill="var(--ink)">1 / 3</text>
+      <text x="0" y="32" font-family="var(--font-mono)" font-size="11" fill="var(--ink-dim)">the transcript showed three files written; the disk had one</text>
+    </g>
+    <g class="gr" tabindex="0">
+      <text x="0" y="64" font-family="var(--font-display)" font-weight="700" font-size="14" fill="var(--moss)">little-coder</text>
+      <rect x="180" y="54" width="420" height="14" fill="none" stroke="var(--rule)" stroke-width="1" stroke-dasharray="3 3"></rect>
+      <line x1="180" y1="50" x2="180" y2="72" stroke="var(--bad)" stroke-width="2"></line>
+      <text x="610" y="65" text-anchor="end" font-family="var(--font-mono)" font-size="12" fill="var(--ink)">0</text>
+      <text x="0" y="82" font-family="var(--font-mono)" font-size="11" fill="var(--ink-dim)">exit code 0, a clean reply; no file was written at all</text>
+    </g>
+    <line x1="0" y1="98" x2="648" y2="98" stroke="var(--rule)" stroke-width="1"></line>
+    <text x="0" y="116" font-family="var(--font-mono)" font-size="10.5px" letter-spacing="0.05em" fill="var(--ink-dim)">dashed track: what the tool reported &middot; solid mark: what a file listing actually showed</text>
+  </svg>
+  <figcaption class="fig-cap">The two tools that reported success without anyone checking the result. Hover or tab into a row to isolate it, a trial interaction not yet a house pattern.</figcaption>
+</figure>
 
 </section>
