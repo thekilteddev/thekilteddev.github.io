@@ -124,7 +124,12 @@
   }
   p { margin: 0 0 20px; }
   main a { color: var(--loch); text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; }
-  code, .mono { font-family: var(--font-mono); font-size: 0.9em; }
+  /* Ligatures OFF (S15). JetBrains Mono renders `!=` as `≠`, which silently alters characters in a
+     block presented as verbatim source — the reader sees an operator the file does not contain and
+     cannot copy what is on screen. Checked before enabling: cloning-a-copy.md:194 already has `==`
+     inside a <code> span (`if __name__ == "__main__"`), so this DOES change a published page —
+     correctly, fixing that exact case rather than leaving it as-is. */
+  code, .mono { font-family: var(--font-mono); font-size: 0.9em; font-variant-ligatures: none; }
   /* NO background behind prose text, inline code included. Settled on a render S11 after two
      wrong turns: the chip was first loch-tinted, then retinted neutral, and neutral was still a
      highlight — the fault was the box, never the hue. JetBrains Mono against Spectral serif is
@@ -209,15 +214,52 @@
      sentence construction and structure. Deliberately no `mark` rule here: an unstyled <mark>
      falls back to the browser default, which is loud enough that nobody ships it by accident. */
   .lead p:first-child { font-size: 20px; line-height: 1.6; }
-  .fig { margin: 32px 0 8px; }
+  /* Symmetric 32px, corrected 2026-08-16 on a user render check. Was `32px 0 8px`, inherited from
+     the block devices below (.ratio/.stat-rows/.trials), where an 8px bottom is fine because the
+     device's own bottom border closes it off. A <figure> ends in a text figcaption instead, so 8px
+     left mono caption text sitting 8px from the next body paragraph — measured 32px above against
+     8px below on all five figures of /carried-the-diagnosis/, a 4:1 asymmetry that read as the
+     caption belonging to the paragraph after it. Consistent everywhere, which is why it looked
+     deliberate; it was one rule written before captions were routine. */
+  .fig { margin: 32px 0; }
   .fig-cap {
     font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em;
     text-transform: uppercase; color: var(--ink-dim); margin: 16px 0 0;
   }
   .fig-cap b { color: var(--loch); font-weight: 500; }
+  /* Two-quantity vertical bars. Promoted to base S15, generalised from dashboard-accused-itself's
+     own scoped <style>, where this first shipped — NOT the same values, and its local copy is NOT
+     redundant: that page still needs its own local <style> block (height 240px vs this 200px,
+     max-width 420px vs 300px, `.ratio-col.flagged`→var(--warn) plus a `.ratio-key em` rule with no
+     equivalent here). Do not delete that local block — it is load-bearing for the published page's
+     warn-coloured "flagged" bar and label. Series colours here follow BRAND: loch is series 1,
+     moss series 2. Real quantities only, ratio to scale — a bar may only draw a number that exists
+     in the piece's source/. */
+  .ratio {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px;
+    align-items: end; height: 200px;
+    border-bottom: 1px solid var(--rule); max-width: 300px;
+  }
+  .ratio-col { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
+  .ratio-bar { background: var(--moss); width: 100%; }
+  .ratio-col.s1 .ratio-bar { background: var(--loch); }
+  .ratio-key {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px;
+    max-width: 300px; margin-top: 12px;
+  }
+  .ratio-key b {
+    font-family: var(--font-display); font-weight: 700; font-size: 19px;
+    letter-spacing: -0.015em; color: var(--ink); display: block; margin-bottom: 4px;
+  }
+  .ratio-key span {
+    font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink-dim); display: block;
+  }
   /* Labelled-row list: a short mono label, then a line of prose. Ported to base S16 from
      route-dont-guess's own scoped .taxes/.tax-* (pilot-era), generically renamed on its
-     second use (the burn-window cold open in invoked-not-executed). Borders only — no fill,
+     second use (the burn-window cold open in invoked-not-executed — that one cold open has
+     since become a .ratio, so don't go looking for it there; the promotion still stands and
+     six other pieces use it). Borders only — no fill,
      no radius — the same no-container family as .pull and the table. The .dominant modifier
      flags the one row that carries the most weight and prints a small "dominant" tag. */
   .stat-rows { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin: 32px 0 8px; }
@@ -282,6 +324,17 @@
      A real table (free header association), hairlines only, no box/fill/radius so R4 cannot apply.
      First trial: tts-voice-hunt, S9/S18. Generic — any candidates-vs-requirements set fits (R1). */
   .ledger { width: 100%; border-collapse: collapse; margin: 0; }
+  /* Undo the generic markdown-table rules above, for .ledger only. Those (S13, written for
+     prose tables) set display:block on <table> and table-layout:fixed on every <tr>, which makes
+     each row compute its own equal-split columns independently of <thead> — so the state marks
+     stopped sitting under their axis headers. This was live and unnoticed on /cloning-a-copy/:
+     measured at 1280px, headers ran 673/747/821/895 while body cells ran 431/565/700/834.
+     A ledger is a real table and needs real column association. The mobile block below still
+     unstacks it — it is later in source at the same specificity, so it wins where it applies. */
+  .ledger { display: table; }
+  .ledger thead { display: table-header-group; }
+  .ledger tbody { display: table-row-group; }
+  .ledger tr { display: table-row; }
   .ledger caption { display: none; }
   .ledger th, .ledger td { padding: 0; text-align: left; vertical-align: baseline; }
   .ledger thead th {
@@ -299,11 +352,55 @@
     display: block; font-family: var(--font-mono); font-size: 10.5px; font-weight: 400;
     letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim); margin-top: 5px;
   }
+  /* Grouped candidates (added 2026-08-16, user render check). Where a ledger's rows are variants of
+     a smaller number of setups rather than independent candidates, repeating the setup name on every
+     row reads as N identical candidates and buries the real structure. tr.group carries the family
+     name once and th.name.sub steps the row down to mono, so the display face marks the family and
+     the variant reads as the technical string it is. Promoted straight to base rather than trialled
+     scoped because two pieces already need it: carried-the-diagnosis (2 families of 3) and
+     invoked-not-executed (3 families of 2, still repeating — a candidate to adopt this, not yet
+     changed). Inert for the ledgers whose candidates are genuinely distinct. */
+  .ledger tr.group th {
+    font-family: var(--font-display); font-weight: 700; font-size: 18px;
+    letter-spacing: -0.015em; color: var(--moss); line-height: 1.3;
+    border-top: 1px solid var(--rule); padding: 26px 0 0;
+  }
+  .ledger tbody tr.group:first-child th { border-top: 0; padding-top: 0; }
+  .ledger tr.group + tr.voice > * { border-top: 0; padding-top: 10px; }
+  .ledger th.name.sub {
+    font-family: var(--font-mono); font-weight: 400; font-size: 12.5px;
+    letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink);
+  }
   .ledger td.cell { text-align: center; }
+  /* The why row spans every column so it can run the full text width, but that put its prose
+     underneath the state-mark columns, which reads as messy against a stack of ticks and crosses
+     (user render check, 2026-08-16 — measured 15 of 18 why-rows overrunning across the four pieces
+     using .ledger, so this is the device's defect, not one piece's). Right padding equal to the
+     axis columns stops the text exactly where the marks begin; it wraps to another line instead,
+     which is the trade the user asked for explicitly.
+     The axis count VARIES by piece — 2 (carried-the-diagnosis, nineteen-calls-every-time,
+     invoked-not-executed), 3 (caught-itself), 4 (cloning-a-copy) — so a single fixed value silently
+     under-pads the wider ones. A first attempt hardcoded 148px and left 9 of the 18 still
+     overrunning while changing two published pages for no gain. Each axis th is a fixed 74px, and
+     the header row is one name th plus N axis ths, so child count identifies N without any per-piece
+     markup: 4 children = 3 axis, 5 = 4 axis. Ordered widest-last so it wins the cascade.
+     The 2-axis default is 200px rather than the 148px the marks alone need, because clearing the
+     marks is the floor and not the goal — a 524px measure still read as too wide (user render check,
+     2026-08-16). The user picked "The failing pair, reproduced in 46 seconds. Raw XML, nothing on
+     disk." as the line to wrap at; it renders 468.1px in Spectral 15px, so 672px table minus a 472px
+     measure leaves that line intact with a few px of cushion. Do NOT tighten this to exactly 468 —
+     that was tried, and rounding 468.1 down wrapped the very line it was measured from, one word
+     onto a second line. The 3- and 4-axis cases already land at 450px and 376px, both inside the
+     measure, so they keep their mark-derived values.
+     max-width was tried first and DOES NOT WORK here — table layout overrides it on a cell, measured
+     lines still running to 516px against a 468px max. Padding is the only lever a table cell honours.
+     The mobile block below resets padding wholesale, so the unstacked layout still runs full width. */
   .ledger tr.why td {
     font-size: 15px; line-height: 1.5; color: var(--ink-dim);
-    padding: 8px 0 20px;
+    padding: 8px 200px 20px 0;
   }
+  .ledger:has(thead th:nth-child(4)) tr.why td { padding-right: 222px; }
+  .ledger:has(thead th:nth-child(5)) tr.why td { padding-right: 296px; }
   .ledger tr.why em { font-style: italic; color: var(--ink); }
   /* Visually hidden but screen-reader-readable. Only reads state text ("met"/"broke") next to a
      cell's glyph — the key at the bottom carries the same words visibly, so nothing is lost. */
@@ -341,6 +438,9 @@
     .ledger thead { display: none; }
     .ledger tr.voice > * { border-top: 0; padding-top: 0; }
     .ledger tr.voice { border-top: 1px solid var(--rule); padding-top: 16px; }
+    /* Unstacked, the row border moves from the cells onto the tr — so the first row under a group
+       header would draw a rule immediately beneath it. The group header already carries its own. */
+    .ledger tr.group + tr.voice { border-top: 0; padding-top: 10px; }
     .ledger th.name { padding-right: 0; }
     .ledger tr.voice td.cell {
       display: inline-flex; align-items: baseline; gap: 7px;
