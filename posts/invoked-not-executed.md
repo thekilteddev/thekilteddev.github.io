@@ -7,9 +7,9 @@ standfirst: >-
   quietly skipped the one step that check existed to guarantee. Invoking a thing and running it
   are different claims.
 description: >-
-  A routing rule meant to stop a deep-research request from burning a five-hour budget, a test of
-  the fix that passed in half the runs, and why invoking a research harness and running it are two
-  different claims.
+  A routing rule meant to stop a deep-research request from burning a five-hour usage window, a
+  test of the fix that passed in half the runs, and why invoking a research harness and running it
+  are two different claims.
 date: 2026-08-17
 bylineTags: ["orchestration", "routing"]
 permalink: /invoked-not-executed/
@@ -17,10 +17,10 @@ permalink: /invoked-not-executed/
 
 <section class="lead">
 
-A deep-research request to the top-tier model tore through three five-hour slots to answer a single question.
+A deep-research request to the top-tier model tore through three consecutive five-hour usage windows &mdash; the rolling quota Claude enforces before a session has to stop and reset &mdash; to answer a single question.
 
 <style>
-  /* Three series, not two. Three consecutive budgets were spent and dropping any one of them to
+  /* Three series, not two. Three consecutive windows were spent and dropping any one of them to
      fit base.njk's two-column .ratio would understate the total, which is the whole point of the
      cold open. Same override the-verification-tax uses for the same reason — grid and width only,
      bar colours, key type and the baseline rule all stay on the shared component. */
@@ -34,11 +34,11 @@ A deep-research request to the top-tier model tore through three five-hour slots
     <div class="ratio-col"><div class="ratio-bar" style="height: 40%"></div></div>
   </div>
   <div class="ratio-key three">
-    <div><b>54%</b><span>slot 1 &middot; two minutes</span></div>
-    <div><b>100%</b><span>slot 2 &middot; four minutes</span></div>
-    <div><b>40%</b><span>slot 3</span></div>
+    <div><b>54%</b><span>window 1 &middot; two minutes</span></div>
+    <div><b>100%</b><span>window 2 &middot; four minutes</span></div>
+    <div><b>40%</b><span>window 3</span></div>
   </div>
-  <figcaption class="fig-cap">Three consecutive five-hour budgets, against one question. They add up to 194% &mdash; nearly two entire budgets &mdash; and the first two were gone inside six minutes.</figcaption>
+  <figcaption class="fig-cap">Three consecutive five-hour usage windows, against one question. They add up to 194% &mdash; nearly two entire windows &mdash; and the first two were gone inside six minutes.</figcaption>
 </figure>
 
 Nobody had done anything unusual. Someone had just asked the model to look something up properly.
