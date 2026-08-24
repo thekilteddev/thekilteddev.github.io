@@ -150,12 +150,12 @@ never determined. The rule is empirical and it's reliable: give it absolute path
 
 A thin harness tuned for small models, giving them real file-writing tools rather than asking them
 to print code into a chat window. It's what scored 8 out of 8 on this project's benchmark in 2.1
-minutes, including the follow-up-fix-without-regression test that had defeated everything before
-it.
+minutes on v1.9.11, including the follow-up-fix-without-regression test that had defeated
+everything before it.
 
-Then a version bump broke it. With its default model it began emitting raw XML that nothing
-parsed, exiting successfully, and writing no files, the worst failure shape available, because an
-exit code of zero and no error output reads as success to anything automated.
+Then an auto-update to v1.9.13 broke it. With its default model it began emitting raw XML that
+nothing parsed, exiting successfully, and writing no files, the worst failure shape available,
+because an exit code of zero and no error output reads as success to anything automated.
 
 The instructive part is the diagnosis, which was wrong the first time. The failure was recorded as
 being caused by the version change breaking model-id resolution, because a warning about the model
