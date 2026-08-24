@@ -84,10 +84,11 @@ the record says twice, write twice, because twice is already a number.
 
 ## <span class="h2-num">our gates run on drafts only</span>What we changed
 
-The humanizer pass and the fact-check both fire before a piece publishes, and neither touches a
-proposal or a policy file. That is how we repeated someone else's unsourced figure without testing
-it. The hole was not a missing checker. Our checkers pointed at the artifacts we thought of as
-output, and the number arrived in one we thought of as correspondence.
+The humanizer pass, an editorial check for machine-generated-sounding phrasing, and the fact-check
+both fire before a piece publishes, and neither touches a proposal or a policy file. That is how we
+repeated someone else's unsourced figure without testing it. The hole was not a missing checker.
+Our checkers pointed at the artifacts we thought of as output, and the number arrived in one we
+thought of as correspondence.
 
 None of these were written by someone being lazy. Each check was built by someone trying to be
 careful, and each returned precisely what it had been built to return. A broken check and a passing
