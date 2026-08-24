@@ -3,7 +3,7 @@ layout: post.njk
 title: Protected nothing
 kicker: Field notes / threat modelling
 standfirst: >-
-  One guardrail stood between a food-diary repository and going public. Someone traced it through the
+  One guardrail stood between a food-diary repository and going public. I traced it through the
   code a day later and found the field it named had never been in the repository. What did need
   guarding was in a file nobody was arguing about.
 description: >-
@@ -31,8 +31,8 @@ project's own words as "hard to guard... loose enough to say go public," and it 
 condition standing between the repository and a public GitHub Pages migration everything else was
 ready for.
 
-The condition held for a day. Then, traced through the actual code rather than argued about again,
-it didn't survive the first look.
+The condition held for a day. Then I traced it through the actual code rather than arguing about it
+again, and it didn't survive the first look.
 
 </section>
 
@@ -44,7 +44,7 @@ The description a client types is captured in the app, stored as a note on a log
 on the device, and exported into a spreadsheet the dietitian handles. It is never committed, never
 pushed, never served. The repository's visibility has no effect on it whatsoever, because it was
 never in the repository to begin with. A guardrail on that field would have protected data that
-going public put at no risk at all.
+going public never put at risk.
 
 <figure class="fig">
   <svg class="path-fig" viewBox="0 0 660 210" role="img" aria-label="The path a typed description actually takes. On the device, it is typed in the app, stored as a note on a log entry in IndexedDB, and exported into a spreadsheet the dietitian handles. The repository sits off that path entirely, connected by nothing: the description is never committed, never pushed, never served. The guardrail was written against a field that the repository never held.">
@@ -72,9 +72,9 @@ going public put at no risk at all.
 A second, independent reason cut just as deep. The app ships with no build step at all, just
 straight unminified JavaScript, so its entire source has been downloaded verbatim by every single
 visitor to the live site since the day it launched. Repo visibility was never protecting the
-application code either, because the browser was already handing that code to anyone who asked. The
-"code stays private" preference behind two earlier hosting rejections had, for the part of the
-project a visitor could reach, never once been true.
+application code either, because the browser was already handing that code to anyone who asked. For the
+part of the project a visitor could actually reach, the "code stays private" preference behind two
+earlier hosting rejections had never once been true.
 
 </section>
 
@@ -87,7 +87,7 @@ wasn't, quite, and the reason was somewhere else entirely: roughly forty tracked
 outside the application folder, never served to a visitor and shielded from view by nothing but the
 repository itself being private. A Namecheap migration plan and the spec beside it,
 <code>DEPLOY.md</code>, <code>NOTES.md</code>, <code>DECISIONS.md</code>, and a stray
-<code>.cpanel.yml</code>. Grepping through all of it for anything infrastructure-shaped turned up
+<code>.cpanel.yml</code>. I grepped through all of it for anything infrastructure-shaped and turned up
 exactly one genuinely sensitive string: a hosting-account username, and not even this project's own
 account. It belonged to someone else's.
 
