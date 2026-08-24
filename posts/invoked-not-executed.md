@@ -60,7 +60,7 @@ does the next piece of work. Most of the policy's machinery assumes that moment 
 gets broken into tasks, and each task is a place to ask who does this.
 
 A direct request, "deep-research this," skips all of that. It's answered as one thing, by
-whichever model receives it, in whichever way that model has of doing research. There's no task
+whichever model receives it, however that model happens to do research. There's no task
 list to route pieces of. The search, the fetching, the extraction, the verification all happen
 inside a single reply from the most expensive available model, because nothing ever asked whether
 the next step needed to be there.
@@ -113,8 +113,8 @@ own five-agent agreement was worth, it corrected itself before anyone pushed bac
 verification — five agents drawing on an overlapping source pool can agree and still be wrong
 together.</p></blockquote>
 
-The step that was skipped wasn't a decoration. It was the one part of the harness whose entire job
-is to catch exactly that kind of agreement that isn't evidence. A rule checking whether the
+The step that was skipped wasn't a decoration. It was the one part of the harness built to catch
+exactly this kind of agreement that isn't evidence. A rule checking whether the
 harness was invoked would have called that run compliant. The harness had not, in the sense that
 mattered, run at all.
 
