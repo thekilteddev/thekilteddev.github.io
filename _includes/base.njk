@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% if title %}{{ title }} — {% endif %}{{ site.name }}</title>
 <meta name="description" content="{{ description or site.description }}">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f6f3" id="theme-color-light">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b1310" id="theme-color-dark">
 <link rel="canonical" href="{{ site.url }}{{ page.url }}">
 {# Open Graph / Twitter cards. Without these a shared link renders as a bare URL with no title
    card, no standfirst and no image — the weakest possible version of a link on a feed built to
@@ -31,6 +33,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700&family=JetBrains+Mono:wght@400;700&family=Spectral:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
+    color-scheme: light;
     --bg: #f4f6f3; --bg-raised: #ffffff; --ink: #1c2523; --ink-dim: #5c6a66;
     --loch: #146e63; --moss: #5f7d3d; --rule: #d6ddd8;
     --good: #2e7d4f; --warn: #a86a1e; --bad: #a3452f;
@@ -44,6 +47,7 @@
      light theme deliberately keeps the prior Loch & Moss values (user call, 2026-07-18). */
   @media (prefers-color-scheme: dark) {
     :root {
+      color-scheme: dark;
       --bg: #0b1310; --bg-raised: #16211f; --ink: #eef1ec; --ink-dim: #93a096;
       --loch: #4db892; --moss: #8fb46f; --rule: #25322f;
       --good: #5fb37e; --warn: #d3944a; --bad: #c9705a;
@@ -51,12 +55,14 @@
     }
   }
   :root[data-theme="light"] {
+    color-scheme: light;
     --bg: #f4f6f3; --bg-raised: #ffffff; --ink: #1c2523; --ink-dim: #5c6a66;
     --loch: #146e63; --moss: #5f7d3d; --rule: #d6ddd8;
     --good: #2e7d4f; --warn: #a86a1e; --bad: #a3452f;
     --panel: #16211f; --panel-ink: #d7ded9;
   }
   :root[data-theme="dark"] {
+    color-scheme: dark;
     --bg: #0b1310; --bg-raised: #16211f; --ink: #eef1ec; --ink-dim: #93a096;
     --loch: #4db892; --moss: #8fb46f; --rule: #25322f;
     --good: #5fb37e; --warn: #d3944a; --bad: #c9705a;
@@ -70,6 +76,15 @@
     -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
   }
   .wrap { max-width: var(--col); margin: 0 auto; padding: 0 24px; }
+  /* Visually hidden until focused — a keyboard/screen-reader user's first Tab stop, letting them
+     jump past the masthead nav straight to the article instead of walking it every page load. */
+  .skip-link {
+    position: absolute; top: -48px; left: 12px; z-index: 10;
+    background: var(--loch); color: var(--bg); font-family: var(--font-mono);
+    font-size: 13px; font-weight: 700; padding: 10px 16px; border-radius: 6px;
+    text-decoration: none; transition: top .15s ease;
+  }
+  .skip-link:focus { top: 12px; }
   header.masthead { border-bottom: 1px solid var(--rule); }
   .masthead .wrap {
     display: flex; align-items: center; justify-content: space-between;
@@ -496,6 +511,7 @@
 </style>
 </head>
 <body>
+  <a class="skip-link" href="#top">Skip to content</a>
   <header class="masthead">
     <div class="wrap">
       <a class="wordmark" href="/"><span class="wm-mark" aria-hidden="true">&rsaquo;</span><span class="wm-the">the</span><span class="wm-kilted">kilted</span><span class="wm-dev">dev</span><span class="wm-cursor" aria-hidden="true"></span></a>
@@ -524,12 +540,17 @@
     (function () {
       var btn = document.getElementById('tt');
       var root = document.documentElement;
+      var themeColor = { light: '#f4f6f3', dark: '#0b1310' };
       btn.addEventListener('click', function () {
         var cur = root.getAttribute('data-theme');
         var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         var next = cur ? (cur === 'dark' ? 'light' : 'dark')
                        : (prefersDark ? 'light' : 'dark');
         root.setAttribute('data-theme', next);
+        // Both meta tags get the SAME explicit colour so the manual override wins
+        // regardless of which one the browser's own (prefers-color-scheme) match picks.
+        document.getElementById('theme-color-light').setAttribute('content', themeColor[next]);
+        document.getElementById('theme-color-dark').setAttribute('content', themeColor[next]);
       });
     })();
   </script>
