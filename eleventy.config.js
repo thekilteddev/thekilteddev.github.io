@@ -5,6 +5,9 @@ export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("favicon.svg");
   // Site-wide Open Graph card. Regenerate with: node tools/cards/render-banner.mjs
   eleventyConfig.addPassthroughCopy("og-default.png");
+  // Transient public hosting for already-published video assets (e.g. Instagram's
+  // container-creation call, which needs a live HTTPS URL, never uploads for you).
+  eleventyConfig.addPassthroughCopy("media");
 
   // Reading time from the rendered post body. ~220 wpm, technical prose, min 1.
   // Strip <style>/<script> bodies first, else per-post CSS is counted as words.
