@@ -83,6 +83,13 @@ permalink: /route-dont-guess/
     .tax-row { grid-template-columns: 1fr; gap: 6px; }
     .tl { grid-template-columns: 1fr; gap: 4px; }
   }
+  /* Two new figures (BACKLOG 22 retrofit): the ladder fig-1 only gestures at ("push down the cost
+     ladder"), and the middle-manager incident fig-1 doesn't draw at all. Same inline-SVG hairline
+     convention as the-missing-production-stage's stage-fig — mono text throughout, no fill except
+     the one flagged mark, stroke-only rects/dots so R4 cannot apply. */
+  .fig svg { display: block; width: 100%; height: auto; }
+  .ladder-fig { max-width: 320px; }
+  .calls-fig { max-width: 360px; margin: 0 auto; }
 </style>
 
 <section class="lead">
@@ -113,6 +120,34 @@ permalink: /route-dont-guess/
     <figcaption class="fig-cap"><b>Fig 1.</b> Task shape, not difficulty, decides the route.</figcaption>
   </figure>
 
+  <p>"Push down the ladder" isn't one step — it's three, in a fixed order. A fourth rung, the top one, is never in play at all.</p>
+
+  <figure class="fig">
+    <svg class="ladder-fig" viewBox="0 0 320 370" role="img" aria-label="The cost ladder drawn as four rungs, cheapest at the bottom. From bottom to top: script, local model (Python-shaped work only), low-cost hosted tier (one route here still unproven), and top-tier model, which stays in-session for iterative, judgment-heavy work and is never routed down to. An arrow beside the rungs points down, marking the direction a one-shot, objectively checkable task gets pushed.">
+      <line x1="14" y1="20" x2="14" y2="348" stroke="var(--ink-dim)" stroke-width="1"></line>
+      <line x1="8" y1="342" x2="14" y2="348" stroke="var(--ink-dim)" stroke-width="1.5"></line>
+      <line x1="20" y1="342" x2="14" y2="348" stroke="var(--ink-dim)" stroke-width="1.5"></line>
+
+      <rect x="36" y="14" width="280" height="64" fill="none" stroke="var(--loch)" stroke-width="1.5"></rect>
+      <text x="50" y="42" font-family="var(--font-mono)" font-size="15" fill="var(--loch)">top-tier model</text>
+      <text x="50" y="62" font-family="var(--font-mono)" font-size="11.5" fill="var(--ink-dim)">iterative, judgment-heavy</text>
+      <text x="306" y="32" text-anchor="end" font-family="var(--font-mono)" font-size="10.5" letter-spacing="0.05em" fill="var(--loch)">TOP &uarr;</text>
+
+      <rect x="36" y="104" width="280" height="64" fill="none" stroke="var(--rule)" stroke-width="1"></rect>
+      <text x="50" y="132" font-family="var(--font-mono)" font-size="15" fill="var(--ink)">low-cost hosted tier</text>
+      <text x="50" y="152" font-family="var(--font-mono)" font-size="11.5" fill="var(--ink-dim)">one route here: unproven</text>
+
+      <rect x="36" y="194" width="280" height="64" fill="none" stroke="var(--rule)" stroke-width="1"></rect>
+      <text x="50" y="222" font-family="var(--font-mono)" font-size="15" fill="var(--ink)">local model</text>
+      <text x="50" y="242" font-family="var(--font-mono)" font-size="11.5" fill="var(--ink-dim)">Python-shaped work only</text>
+
+      <rect x="36" y="284" width="280" height="64" fill="none" stroke="var(--rule)" stroke-width="1"></rect>
+      <text x="50" y="320" font-family="var(--font-mono)" font-size="15" fill="var(--ink)">script</text>
+      <text x="306" y="340" text-anchor="end" font-family="var(--font-mono)" font-size="10.5" letter-spacing="0.05em" fill="var(--moss)">DOWN &darr;</text>
+    </svg>
+    <figcaption class="fig-cap"><b>Fig 2.</b> The "route down" arrow in fig 1 is three separate rungs, not one step — and one of them has never actually been used.</figcaption>
+  </figure>
+
   <p>Underneath that split sit three costs the "low-cost tier for easy tasks" instinct never prices in.</p>
 
   <div class="taxes" role="list" aria-label="Three hidden costs">
@@ -140,6 +175,69 @@ permalink: /route-dont-guess/
   <p>The terminal review is the second. Per-task reviews can run on a mid tier, but the whole-branch pass before anything ships always runs top-tier, because it catches what the narrower passes miss. A pass on a low-cost tier once sailed past a real security hole that a stronger model then caught. The rule dates from that day.</p>
   <p>Third, a green light from a low-cost tier gates a dispatch but never substitutes for verification. Low-cost models have a structural habit of reporting success they haven't earned.</p>
   <p>Fourth, the orchestration layer itself. A low-cost model was tried as middle manager between the session and a worker. Sixty minutes and roughly fifty tool calls later it had shipped nothing and quietly run a global install nobody asked for. Delegation stays a command the session issues directly.</p>
+
+  <figure class="fig">
+    <svg class="calls-fig" viewBox="0 0 360 235" role="img" aria-label="Fifty small marks in a ten-by-five grid represent the roughly fifty tool calls a low-cost model made in about sixty minutes when tried as a middle manager between the session and a worker. Forty-nine are plain. One, near the end of the sequence, is marked in red: an unsanctioned global npm install nobody asked for. Beneath the grid, a large zero, labelled shipped, is the total amount of real work delivered in that time.">
+      <text x="180" y="12" text-anchor="middle" font-family="var(--font-mono)" font-size="12" letter-spacing="0.05em" fill="var(--ink-dim)">~50 TOOL CALLS, ~60 MINUTES</text>
+      <!-- generated: 10x5 grid, x=52+col*32, y=32+row*32; the flagged call is index 47 (row 4, col 7) -->
+      <circle cx="52" cy="32" r="4" fill="var(--rule)"></circle>
+      <circle cx="84" cy="32" r="4" fill="var(--rule)"></circle>
+      <circle cx="116" cy="32" r="4" fill="var(--rule)"></circle>
+      <circle cx="148" cy="32" r="4" fill="var(--rule)"></circle>
+      <circle cx="180" cy="32" r="4" fill="var(--rule)"></circle>
+      <circle cx="212" cy="32" r="4" fill="var(--rule)"></circle>
+      <circle cx="244" cy="32" r="4" fill="var(--rule)"></circle>
+      <circle cx="276" cy="32" r="4" fill="var(--rule)"></circle>
+      <circle cx="308" cy="32" r="4" fill="var(--rule)"></circle>
+      <circle cx="52" cy="64" r="4" fill="var(--rule)"></circle>
+      <circle cx="84" cy="64" r="4" fill="var(--rule)"></circle>
+      <circle cx="116" cy="64" r="4" fill="var(--rule)"></circle>
+      <circle cx="148" cy="64" r="4" fill="var(--rule)"></circle>
+      <circle cx="180" cy="64" r="4" fill="var(--rule)"></circle>
+      <circle cx="212" cy="64" r="4" fill="var(--rule)"></circle>
+      <circle cx="244" cy="64" r="4" fill="var(--rule)"></circle>
+      <circle cx="276" cy="64" r="4" fill="var(--rule)"></circle>
+      <circle cx="308" cy="64" r="4" fill="var(--rule)"></circle>
+      <circle cx="340" cy="32" r="4" fill="var(--rule)"></circle>
+      <circle cx="340" cy="64" r="4" fill="var(--rule)"></circle>
+      <circle cx="52" cy="96" r="4" fill="var(--rule)"></circle>
+      <circle cx="84" cy="96" r="4" fill="var(--rule)"></circle>
+      <circle cx="116" cy="96" r="4" fill="var(--rule)"></circle>
+      <circle cx="148" cy="96" r="4" fill="var(--rule)"></circle>
+      <circle cx="180" cy="96" r="4" fill="var(--rule)"></circle>
+      <circle cx="212" cy="96" r="4" fill="var(--rule)"></circle>
+      <circle cx="244" cy="96" r="4" fill="var(--rule)"></circle>
+      <circle cx="276" cy="96" r="4" fill="var(--rule)"></circle>
+      <circle cx="308" cy="96" r="4" fill="var(--rule)"></circle>
+      <circle cx="340" cy="96" r="4" fill="var(--rule)"></circle>
+      <circle cx="52" cy="128" r="4" fill="var(--rule)"></circle>
+      <circle cx="84" cy="128" r="4" fill="var(--rule)"></circle>
+      <circle cx="116" cy="128" r="4" fill="var(--rule)"></circle>
+      <circle cx="148" cy="128" r="4" fill="var(--rule)"></circle>
+      <circle cx="180" cy="128" r="4" fill="var(--rule)"></circle>
+      <circle cx="212" cy="128" r="4" fill="var(--rule)"></circle>
+      <circle cx="244" cy="128" r="4" fill="var(--rule)"></circle>
+      <circle cx="276" cy="128" r="4" fill="var(--rule)"></circle>
+      <circle cx="308" cy="128" r="4" fill="var(--rule)"></circle>
+      <circle cx="340" cy="128" r="4" fill="var(--rule)"></circle>
+      <circle cx="52" cy="160" r="4" fill="var(--rule)"></circle>
+      <circle cx="84" cy="160" r="4" fill="var(--rule)"></circle>
+      <circle cx="116" cy="160" r="4" fill="var(--rule)"></circle>
+      <circle cx="148" cy="160" r="4" fill="var(--rule)"></circle>
+      <circle cx="180" cy="160" r="4" fill="var(--rule)"></circle>
+      <circle cx="212" cy="160" r="4" fill="var(--rule)"></circle>
+      <circle cx="244" cy="160" r="4" fill="var(--rule)"></circle>
+      <circle cx="276" cy="160" r="5" fill="var(--bad)"></circle>
+      <circle cx="308" cy="160" r="4" fill="var(--rule)"></circle>
+      <circle cx="340" cy="160" r="4" fill="var(--rule)"></circle>
+      <line x1="276" y1="167" x2="270" y2="182" stroke="var(--bad)" stroke-width="1"></line>
+      <text x="266" y="194" text-anchor="end" font-family="var(--font-mono)" font-size="11" fill="var(--bad)">npm install -g</text>
+
+      <text x="0" y="222" font-family="var(--font-display)" font-weight="700" font-size="30" fill="var(--ink)">0</text>
+      <text x="34" y="222" font-family="var(--font-mono)" font-size="12" letter-spacing="0.05em" fill="var(--ink-dim)">SHIPPED</text>
+    </svg>
+    <figcaption class="fig-cap"><b>Fig 3.</b> Fifty tool calls, one unsanctioned side effect, nothing delivered.</figcaption>
+  </figure>
 
   <div class="cmd"><span class="p" aria-hidden="true">&rsaquo;</span>echo "nobody gets a middle manager"</div>
 </section>
