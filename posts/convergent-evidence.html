@@ -12,29 +12,6 @@ permalink: /convergent-evidence/
   /* standfirst carries a link on this piece; base sets neither */
   .standfirst { max-width: 46ch; }
   .standfirst a { color: var(--loch); text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; }
-/* ---- candidate ledger: rule-separated rows, no cards, no stripes ---- */
-  .ledger {
-    border-top: 1px solid var(--rule);
-    border-bottom: 1px solid var(--rule);
-    margin: 32px 0 8px;
-  }
-  .cand {
-    padding: 22px 0;
-    border-top: 1px solid var(--rule);
-  }
-  .cand:first-child { border-top: none; }
-  .cand p {
-    margin: 0;
-    font-size: 16.5px;
-    line-height: 1.6;
-  }
-  .cand strong {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 17px;
-    letter-spacing: -0.01em;
-    color: var(--moss);   /* moss = decorative/secondary; never confusable with a loch link */
-  }
 
   /* ---- side-by-side comparison ---- */
   /* frame lives on the wrapper: border-radius is ignored on a border-collapse table */
@@ -148,43 +125,77 @@ permalink: /convergent-evidence/
   <h2><span class="h2-num">the head-on cases</span>The direct comparators</h2>
   <p>Six candidates were orchestrators or multi-agent harnesses solving the same problem: which model does which task, and how do you trust what comes back.</p>
 
-  <div class="ledger">
-    <div class="cand">
-      <p><strong>Fable Foreman</strong> is parked, worth watching. It sits near one-to-one with our own routing policy: capability-class tiers, blind verification, budget-aware dispatch. The value was design comparison rather than new capability. It was also four days old at review, with two of its three headline features gated behind a call-to-action and never actually shown.</p>
-    </div>
-    <div class="cand">
-      <p><strong>Ruflo</strong> went to the backlog. A hundred-plus prebuilt agents, vector memory, multi-model routing, some 210 tool integrations, 58k+ GitHub stars and climbing. What it sells is the routing-plus-verification loop already running here, more simply.</p>
-    </div>
-    <div class="cand">
-      <p><strong>CrewAI skills</strong> was rejected on overlap, not quality. It's official plugin scaffolding for an orchestrator, researcher, writer, and reviewer crew, from a legitimate 55.5k-star parent project. The same pattern already runs on the machine's own workflow and routing layers; a third-party framework would duplicate it rather than extend it.</p>
-    </div>
-    <div class="cand">
-      <p><strong>9router</strong> was rejected hard. It's a credential-interception proxy for every model provider, carrying an unauthenticated remote-code-execution flaw scored CVSS 10, plus terms-of-service risk for any subscription routed through it. An existing fallback covers the same need safely.</p>
-    </div>
-    <div class="cand">
-      <p><strong>Claude Council</strong> was declined by choice. A genuine multi-model consultation plugin, honestly framed, but a lighter version of a panel-of-models pattern already covered elsewhere.</p>
-    </div>
-    <div class="cand">
-      <p><strong>Three "agentic OS" reels</strong> were rejected with nothing to install. Camera mockups of an always-on multi-agent life OS. Every named part (a constitution file, tier routing, adversarial sparring, a cost ledger, a budget halt) maps onto pieces already running here, separately and more safely. The bundle is marketing wrapped around five patterns already decomposed on purpose.</p>
-    </div>
-  </div>
+  <figure class="fig">
+  <table>
+    <thead>
+      <tr><th scope="col">Tool</th><th scope="col">Verdict</th><th scope="col">Why</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="entity">Fable Foreman</span></td>
+        <td><span class="tag warn">watch</span></td>
+        <td>Near one-to-one with our own routing policy: capability-class tiers, blind verification, budget-aware dispatch. The value was design comparison rather than new capability. Also four days old at review, with two of its three headline features gated behind a call-to-action and never actually shown.</td>
+      </tr>
+      <tr>
+        <td><span class="entity">Ruflo</span></td>
+        <td><span class="tag warn">backlog</span></td>
+        <td>A hundred-plus prebuilt agents, vector memory, multi-model routing, some 210 tool integrations, 58k+ GitHub stars and climbing. What it sells is the routing-plus-verification loop already running here, more simply.</td>
+      </tr>
+      <tr>
+        <td><span class="entity">CrewAI skills</span></td>
+        <td><span class="tag bad">rejected</span></td>
+        <td>Official plugin scaffolding for an orchestrator, researcher, writer, and reviewer crew, from a legitimate 55.5k-star parent project. Rejected on overlap, not quality — the same pattern already runs on the machine's own workflow and routing layers; a third-party framework would duplicate it rather than extend it.</td>
+      </tr>
+      <tr>
+        <td><span class="entity">9router</span></td>
+        <td><span class="tag bad">rejected</span></td>
+        <td>A credential-interception proxy for every model provider, carrying an unauthenticated remote-code-execution flaw scored CVSS 10, plus terms-of-service risk for any subscription routed through it. An existing fallback covers the same need safely.</td>
+      </tr>
+      <tr>
+        <td><span class="entity">Claude Council</span></td>
+        <td><span class="tag bad">declined</span></td>
+        <td>A genuine multi-model consultation plugin, honestly framed, but a lighter version of a panel-of-models pattern already covered elsewhere. Declined by choice, not filed.</td>
+      </tr>
+      <tr>
+        <td><span class="entity">"Agentic OS" reels ×3</span></td>
+        <td><span class="tag bad">rejected</span></td>
+        <td>Camera mockups of an always-on multi-agent life OS — nothing to install. Every named part (a constitution file, tier routing, adversarial sparring, a cost ledger, a budget halt) maps onto pieces already running here, separately and more safely. The bundle is marketing wrapped around five patterns already decomposed on purpose.</td>
+      </tr>
+    </tbody>
+  </table>
+  <figcaption class="fig-cap">Every routing-shaped tool that crossed the desk over the same ten days. Not one added a capability the routing policy didn't already have.</figcaption>
+  </figure>
 </section>
 
 <section>
   <h2><span class="h2-num">a different shelf</span>The adjacent category</h2>
   <p>The second cluster doesn't route anything. These are desktop shells for running a fan-out once you've decided on one, checked for an unrelated reason rather than because they compete with the routing policy.</p>
 
-  <div class="ledger">
-    <div class="cand">
-      <p><strong>Orca</strong> was confirmed hands-on. Free, runs the real CLI under your own subscription; skill and plugin parity held up, and a worktree fan-out plus diff-and-merge round-trip verified end to end on a scratch repo. 12.1k stars.</p>
-    </div>
-    <div class="cand">
-      <p><strong>Nimbalyst</strong> went to the backlog. Kanban-style parallel sessions with worktree isolation, parked pending confirmation it plays well with an existing hook-based workflow.</p>
-    </div>
-    <div class="cand">
-      <p><strong>DevSwarm</strong> was rejected. Same category as Orca, but closed-source, paid, download-only, and the public repo is a landing page with 87 stars. It doesn't clear a bar a free alternative already cleared.</p>
-    </div>
-  </div>
+  <figure class="fig">
+  <table>
+    <thead>
+      <tr><th scope="col">Tool</th><th scope="col">Verdict</th><th scope="col">Why</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="entity">Orca</span></td>
+        <td><span class="tag good">confirmed</span></td>
+        <td>Free, runs the real CLI under your own subscription; skill and plugin parity held up, and a worktree fan-out plus diff-and-merge round-trip verified end to end on a scratch repo. 12.1k stars.</td>
+      </tr>
+      <tr>
+        <td><span class="entity">Nimbalyst</span></td>
+        <td><span class="tag warn">backlog</span></td>
+        <td>Kanban-style parallel sessions with worktree isolation, parked pending confirmation it plays well with an existing hook-based workflow.</td>
+      </tr>
+      <tr>
+        <td><span class="entity">DevSwarm</span></td>
+        <td><span class="tag bad">rejected</span></td>
+        <td>Same category as Orca, but closed-source, paid, download-only, and the public repo is a landing page with 87 stars. It doesn't clear a bar a free alternative already cleared.</td>
+      </tr>
+    </tbody>
+  </table>
+  <figcaption class="fig-cap">Desktop shells for running a fan-out once you've already decided on one — a different question from the routing table above.</figcaption>
+  </figure>
 </section>
 
 <section>
@@ -200,6 +211,7 @@ permalink: /convergent-evidence/
   <h2><span class="h2-num">dimension by dimension</span>The closest comparator, side by side</h2>
   <p>Fable Foreman is worth lining up in full, precisely because it's the closest external thing to the in-house build.</p>
 
+  <figure class="fig">
   <div class="cmp-wrap">
     <table class="cmp">
       <thead>
@@ -243,6 +255,8 @@ permalink: /convergent-evidence/
       </tbody>
     </table>
   </div>
+  <figcaption class="fig-cap">The one candidate close enough to justify a full dimension-by-dimension read, not a missing capability.</figcaption>
+  </figure>
 
   <p>The market kept independently rediscovering the same routing model: a stranger's config file, an academic paper, three viral reels, and a four-day-old repo that maps onto our own build dimension for dimension. None became a dependency, because the same five patterns were already decomposed into separable, auditable pieces before any of them showed up.</p>
 </section>
