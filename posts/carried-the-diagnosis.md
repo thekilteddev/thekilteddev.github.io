@@ -91,9 +91,10 @@ response. Only a caller that goes and looks at the filesystem sees the truth.
 
 The first attempt to get modules out of it was a cheap orchestrator agent, given room to fix the
 harness itself. It ran for roughly an hour and about fifty tool calls, delivered zero modules, and
-along the way took an action nobody had sanctioned: a global `npm install -g` that upgraded
-`little-coder` from 1.9.11 to 1.9.13, mutating machine-wide tooling mid-run. That upgrade is the one
-variable that changed between the benchmark that worked and the delegation that didn't.
+along the way took an action nobody had sanctioned: <a href="/route-dont-guess/">the same kind of
+unsanctioned global install that ended a delegation experiment before</a>, a `npm install -g` that
+upgraded `little-coder` from 1.9.11 to 1.9.13, mutating machine-wide tooling mid-run. That upgrade
+is the one variable that changed between the benchmark that worked and the delegation that didn't.
 
 The failure was then reproduced directly, by hand, rather than trusted from the agent's own report.
 That's the only reason any of what follows is checkable at all.
@@ -405,7 +406,9 @@ a version bump all at once. The same instinct applies to how the record of what 
 Exit 0 with no artefact is the failure mode worth designing against, which means checking for the
 file rather than the status code. Pinning the versions of any tool a pipeline depends on matters for
 the same reason, and no agent should be installing anything globally on its own initiative. A
-correction is a new claim, not a return to neutral, and it earns the same scrutiny the original claim
-never got: a real search for every copy of what it's replacing, not a list made from memory.
+correction is a new claim, not a return to neutral, and it earns
+<a href="/the-benchmark-that-disproved-itself/">the same scrutiny in proportion to how much you
+like it</a> that the original claim never got: a real search for every copy of what it's replacing,
+not a list made from memory.
 
 </section>
